@@ -1,2 +1,3 @@
 # functional-programming-in-scala
-excercises from: Functional Programming in Scala
+
+Exercises from the book: Functional Programming in Scala
