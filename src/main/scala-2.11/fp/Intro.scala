@@ -1,5 +1,7 @@
 package fp
 
+import scala.annotation.tailrec
+
 object Intro {
 
   /**
@@ -61,5 +63,7 @@ object Intro {
    * Pure Functions are like black box.
    */
 
-  def fib(n: Int): Int = if(n == 0) 0 else if (n == 1) 1 else fib(n-1) + fib(n-2)
+  @tailrec
+  def fib(n: Int, last: Int = 0, cur: Int = 1): Int = if (n == 0) last else fib(n - 1, cur, last + cur)
+
 }
