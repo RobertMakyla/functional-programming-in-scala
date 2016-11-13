@@ -3,9 +3,7 @@
  - functions referentially transparent (for the same input always give the same output)
 
 ## Side Effects
- 
-This is a property of pure functions
- 
+  
 eg:
  - modifying variables / DB
  - throwing an exception
