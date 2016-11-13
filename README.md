@@ -41,9 +41,10 @@ eg of not RT:
  
 ## Why use Pure Functions ?
  
-We don't have to care about multiple points of access to a function (eg: by different references)
-We don't have to care about in which order function will be called (side effects) or in which moment (RT).
-We don't have to care about state changes that may occur before/after function's call (RT)
+With PF we don't have to care about :
+ - multiple points of access to a function (eg: by different references)
+ - in which order function will be called (side effects) or in which moment (RT).
+ - state changes that may occur before/after function's call (RT)
  
 We only need to focus on function's body, which make life easier.
  
