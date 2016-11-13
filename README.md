@@ -4,7 +4,6 @@
 
 ## Side Effects
   
-eg:
  - modifying variables / DB
  - throwing an exception
  - printing to console / drawing on the screen
@@ -25,9 +24,10 @@ We should implement apps with a pure core and a thin layer on the outside that h
 ## Referential Transparency (RT)
  
 This is another property of pure functions.
+
 For the same input they always give the same output so they can be replaced with result without changing program.
  
-1 + 1 can be replaced with 2. That's why function .+() is can vbe called referentially transparent.
+1 + 1 can be replaced with 2. That's why function .+() can be called referentially transparent.
  
 eg of not RT:
 ```scala
@@ -35,7 +35,6 @@ eg of not RT:
  sb.append(", World")   // Hello, World
  sb.append(", World")   // Hello, World, World
 ```
-
  
 ## Why use Pure Functions ?
  
