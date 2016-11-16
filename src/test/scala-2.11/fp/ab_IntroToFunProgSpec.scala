@@ -24,14 +24,24 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
     "curry" in {
       def input(i: Int, s: String): Boolean = s.length == i
-      val int2String2Boolean: (Int) => (String) => Boolean = curry(input)
+      val actual: Int => String => Boolean = curry(input)
 
-      int2String2Boolean(0)("") mustBe true
-      int2String2Boolean(1)("a") mustBe true
-      int2String2Boolean(2)("ab") mustBe true
-      int2String2Boolean(0)("abc") mustBe false
-
+      actual(0)("") mustBe true
+      actual(1)("a") mustBe true
+      actual(2)("ab") mustBe true
+      actual(0)("abc") mustBe false
     }
+
+    "uncurry" in {
+      def input(i: Int)(s: String): Boolean = s.length == i
+      val actual: (Int, String) => Boolean = uncurry(input)
+
+      actual(0, "") mustBe true
+      actual(1, "a") mustBe true
+      actual(2, "ab") mustBe true
+      actual(0, "abc") mustBe false
+    }
+
   }
 
 }
