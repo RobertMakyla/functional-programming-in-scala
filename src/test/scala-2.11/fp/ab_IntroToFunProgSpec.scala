@@ -26,20 +26,22 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       def input(i: Int, s: String): Boolean = s.length == i
       val actual: Int => String => Boolean = curry(input)
 
-      actual(0)("") mustBe true
-      actual(1)("a") mustBe true
-      actual(2)("ab") mustBe true
-      actual(0)("abc") mustBe false
+      actual(3)("abc") mustBe true
+      actual(1)("abc") mustBe false
     }
 
     "uncurry" in {
       def input(i: Int)(s: String): Boolean = s.length == i
       val actual: (Int, String) => Boolean = uncurry(input)
 
-      actual(0, "") mustBe true
-      actual(1, "a") mustBe true
-      actual(2, "ab") mustBe true
+      actual(3, "abc") mustBe true
       actual(0, "abc") mustBe false
+    }
+
+    "compose" in {
+      def a2b(s:String):Int = s.length
+      def b2c(i:Int): Long = i.toLong
+      compose(b2c, a2b)("abc") mustBe 3L
     }
 
   }

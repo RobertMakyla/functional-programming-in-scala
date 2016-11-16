@@ -22,6 +22,12 @@ object ab_IntroToFunProg {
 
     def uncurry[A, B, C](f: A => B => C): (A, B) => C =
       (a: A, b: B) => f(a)(b)
+
+    def compose[A, B, C](f: B => C, g: A => B): A => C =
+    // (a: A) => f(g(a))
+    // (a: A) => (f compose g)(a)
+    // (f compose g)( _ )
+      f compose g
   }
 
 }
