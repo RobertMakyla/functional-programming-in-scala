@@ -23,16 +23,16 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     import HigherOrderFunctions._
 
     "curry" in {
-      def input(i: Int, s: String): Boolean = s.length == i
-      val actual: Int => String => Boolean = curry(input)
+      def sizeIsOK(i: Int, s: String): Boolean = s.length == i
+      val actual: Int => String => Boolean = curry(sizeIsOK)
 
       actual(3)("abc") mustBe true
       actual(1)("abc") mustBe false
     }
 
     "uncurry" in {
-      def input(i: Int)(s: String): Boolean = s.length == i
-      val actual: (Int, String) => Boolean = uncurry(input)
+      def sizeIsOK(i: Int)(s: String): Boolean = s.length == i
+      val actual: (Int, String) => Boolean = uncurry(sizeIsOK)
 
       actual(3, "abc") mustBe true
       actual(0, "abc") mustBe false
