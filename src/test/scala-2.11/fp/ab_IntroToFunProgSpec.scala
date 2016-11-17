@@ -38,10 +38,14 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       actual(0, "abc") mustBe false
     }
 
+    def a2b(s: String): Int = s.length
+    def b2c(i: Int): Long = i.toLong
+
     "compose" in {
-      def a2b(s:String):Int = s.length
-      def b2c(i:Int): Long = i.toLong
       compose(b2c, a2b)("abc") mustBe 3L
+    }
+    "andThen" in {
+      andThen(a2b, b2c)("abc") mustBe 3L
     }
 
   }

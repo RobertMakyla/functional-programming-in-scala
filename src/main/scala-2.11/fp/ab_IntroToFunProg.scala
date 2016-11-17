@@ -28,6 +28,12 @@ object ab_IntroToFunProg {
     // (a: A) => (f compose g)(a)
     // (f compose g)( _ )
       f compose g
+
+    def andThen[A, B, C](f: A => B, g: B => C): A => C =
+    // (a: A) => g(f(a))
+    // (a: A) => (f andThen g)(a)
+    // (f andThen g)( _)
+      f andThen g
   }
 
 }
