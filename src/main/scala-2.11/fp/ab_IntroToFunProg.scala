@@ -44,10 +44,11 @@ object ab_IntroToFunProg {
 
     def setHead[T](h: T, ls: List[T]): List[T] = h :: ls
 
+    @tailrec
     def drop[T](ls: List[T], n: Int): List[T] = (ls, n) match {
-      case (l, i) if l.size < n => throw new IllegalArgumentException("list is too small")
+      case (l, i) if l.size < i => throw new IllegalArgumentException("list is too small")
       case (_, 0) => ls
-      case (l, _) => drop(tail(l), n - 1)
+      case (l, i) => drop(tail(l), i - 1)
     }
 
     @tailrec
@@ -57,6 +58,12 @@ object ab_IntroToFunProg {
       case h :: tail if !f(h) => dropWhile(tail, f, h :: acc)
     }
 
+    @tailrec
+    def init[A](l: List[A], acc: List[A] = Nil): List[A] = l match {
+      case Nil => throw new IllegalArgumentException("list should not be empty")
+      case _ :: Nil => acc.reverse
+      case h :: tail => init(tail, h :: acc)
+    }
   }
 
 }

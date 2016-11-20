@@ -68,6 +68,12 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       dropWhile[Int](List(1, 2, 3, 4, 5, 6, 7), _ % 2 == 0) mustBe List(1, 3, 5, 7)
       dropWhile[String](List("a", "bb", "ccc", "dd"), _.length >= 2) mustBe List("a")
     }
+    "init" in {
+      init(List(1,2,3,4,5)) mustBe List(1,2,3,4)
+      init(List(1,2)) mustBe List(1)
+      init(List(1)) mustBe Nil
+      intercept[IllegalArgumentException](init(Nil)).getMessage mustBe "list should not be empty"
+    }
   }
 
 }
