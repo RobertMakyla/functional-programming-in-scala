@@ -39,7 +39,7 @@ object ab_IntroToFunProg {
   object FunctionalDataStructures {
     def tail[T](ls: List[T]): List[T] = ls match {
       case Nil => throw new IllegalArgumentException("list should not be empty")
-      case h :: tail => tail
+      case _ :: tail => tail
     }
 
     def setHead[T](h: T, ls: List[T]): List[T] = h :: ls
@@ -49,6 +49,14 @@ object ab_IntroToFunProg {
       case (_, 0) => ls
       case (l, _) => drop(tail(l), n - 1)
     }
+
+    @tailrec
+    def dropWhile[A](l: List[A], f: A => Boolean, acc: List[A] = Nil): List[A] = l match {
+      case Nil => acc.reverse
+      case h :: tail if f(h) => dropWhile(tail, f, acc)
+      case h :: tail if !f(h) => dropWhile(tail, f, h :: acc)
+    }
+
   }
 
 }

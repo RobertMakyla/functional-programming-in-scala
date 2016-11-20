@@ -64,6 +64,10 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       drop(List(1, 2, 3), 3) mustBe Nil
       intercept[IllegalArgumentException](drop(List(1, 2), 3)).getMessage mustBe "list is too small"
     }
+    "dropWhile" in {
+      dropWhile[Int](List(1, 2, 3, 4, 5, 6, 7), _ % 2 == 0) mustBe List(1, 3, 5, 7)
+      dropWhile[String](List("a", "bb", "ccc", "dd"), _.length >= 2) mustBe List("a")
+    }
   }
 
 }
