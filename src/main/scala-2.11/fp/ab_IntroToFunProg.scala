@@ -52,14 +52,14 @@ object ab_IntroToFunProg {
     }
 
     @tailrec
-    def dropWhile[A](l: List[A], f: A => Boolean, acc: List[A] = Nil): List[A] = l match {
+    def dropWhile[A](ls: List[A], f: A => Boolean, acc: List[A] = Nil): List[A] = ls match {
       case Nil => acc.reverse
       case h :: tail if f(h) => dropWhile(tail, f, acc)
       case h :: tail if !f(h) => dropWhile(tail, f, h :: acc)
     }
 
     @tailrec
-    def init[A](l: List[A], acc: List[A] = Nil): List[A] = l match {
+    def init[A](ls: List[A], acc: List[A] = Nil): List[A] = ls match {
       case Nil => throw new IllegalArgumentException("list should not be empty")
       case _ :: Nil => acc.reverse
       case h :: tail => init(tail, h :: acc)
