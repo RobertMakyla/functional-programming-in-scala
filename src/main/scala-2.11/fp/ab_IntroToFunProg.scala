@@ -36,4 +36,19 @@ object ab_IntroToFunProg {
       f andThen g
   }
 
+  object FunctionalDataStructures {
+    def tail[T](ls: List[T]): List[T] = ls match {
+      case Nil => throw new IllegalArgumentException("list should not be empty")
+      case h :: tail => tail
+    }
+
+    def setHead[T](h: T, ls: List[T]): List[T] = h :: ls
+
+    def drop[T](ls: List[T], n: Int): List[T] = (ls, n) match {
+      case (l, i) if l.size < n => throw new IllegalArgumentException("list is too small")
+      case (_, 0) => ls
+      case (l, _) => drop(tail(l), n - 1)
+    }
+  }
+
 }

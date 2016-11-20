@@ -49,4 +49,21 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     def b2c(i: Int): Long = i.toLong
   }
 
+  "Functional Data Structures" - {
+    import FunctionalDataStructures._
+    "tail" in {
+      tail(List(1, 2, 3)) mustBe List(2, 3)
+      intercept[IllegalArgumentException](tail(Nil)).getMessage mustBe "list should not be empty"
+    }
+    "head" in {
+      setHead(1, List(2, 3)) mustBe List(1, 2, 3)
+      setHead(1, Nil) mustBe List(1)
+    }
+    "drop" in {
+      drop(List(1, 2, 3), 1) mustBe List(2, 3)
+      drop(List(1, 2, 3), 3) mustBe Nil
+      intercept[IllegalArgumentException](drop(List(1, 2), 3)).getMessage mustBe "list is too small"
+    }
+  }
+
 }
