@@ -79,13 +79,17 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       FunctionalDataStructures.length(List(1)) mustBe 1
       FunctionalDataStructures.length(List(1, 2, 3)) mustBe 3
     }
-
     "foldLeft() tail recursive" in {
       FunctionalDataStructures.foldLeft(List[Int](), 0)(_ + _) mustBe 0
       FunctionalDataStructures.foldLeft(List(5), 5)(_ + _) mustBe 10
       FunctionalDataStructures.foldLeft(List(5, 5), 0)(_ + _) mustBe 10
       FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ + _) mustBe 15
       FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ * _) mustBe 125
+    }
+    "reverse() using fold" in {
+      FunctionalDataStructures.reverse(Nil) mustBe Nil
+      FunctionalDataStructures.reverse(List(1)) mustBe List(1)
+      FunctionalDataStructures.reverse(List(1, 2, 3)) mustBe List(3, 2, 1)
     }
 
   }

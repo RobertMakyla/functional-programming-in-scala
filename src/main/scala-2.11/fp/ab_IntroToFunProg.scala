@@ -84,6 +84,10 @@ object ab_IntroToFunProg {
       case h :: tail => foldLeft(tail, f(z, h))(f)
     }
 
+    /**
+     * reverse a list using fold
+     */
+    def reverse[A](ls: List[A]): List[A] = ls.foldLeft(List.empty[A])((acc, elem) => elem :: acc)
   }
 
 }
