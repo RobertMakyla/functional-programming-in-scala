@@ -74,6 +74,11 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       init(List(1)) mustBe Nil
       intercept[IllegalArgumentException](init(Nil)).getMessage mustBe "list should not be empty"
     }
+    "length" in {
+      FunctionalDataStructures.length(Nil) mustBe 0
+      FunctionalDataStructures.length(List(1)) mustBe 1
+      FunctionalDataStructures.length(List(1,2,3)) mustBe 3
+    }
   }
 
 }

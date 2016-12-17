@@ -64,6 +64,14 @@ object ab_IntroToFunProg {
       case _ :: Nil => acc.reverse
       case h :: tail => init(tail, h :: acc)
     }
+
+    /**
+     * Compute the length of a list using foldRight
+     *
+     * def length[A](as: List[A]): Int
+     */
+    def length[A](as: List[A]): Int = as.foldRight(0)((elem, acc) => acc + 1)
+
   }
 
 }
