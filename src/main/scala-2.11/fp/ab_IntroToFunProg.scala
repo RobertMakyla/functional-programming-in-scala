@@ -70,7 +70,19 @@ object ab_IntroToFunProg {
      *
      * def length[A](as: List[A]): Int
      */
-    def length[A](as: List[A]): Int = as.foldRight(0)((elem, acc) => acc + 1)
+    def length[A](as: List[A]): Int = as.foldRight(0)((_, acc) => acc + 1)
+
+    /**
+     * Implement foldLeft that is tail recursive
+     *
+     * def foldLeft[A,B](ls: List[A], z: B)(f: (B, A) => B): B
+     */
+    @tailrec
+    def foldLeft[A, Z](ls: List[A], z: Z)(f: (Z, A) => Z): Z = ls match {
+      case Nil => z
+      case h :: Nil => f(z, h)
+      case h :: tail => foldLeft(tail, f(z, h))(f)
+    }
 
   }
 

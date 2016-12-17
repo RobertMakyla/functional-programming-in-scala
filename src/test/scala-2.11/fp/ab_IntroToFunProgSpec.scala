@@ -69,16 +69,25 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       dropWhile[String](List("a", "bb", "ccc", "dd"), _.length >= 2) mustBe List("a")
     }
     "init" in {
-      init(List(1,2,3,4,5)) mustBe List(1,2,3,4)
-      init(List(1,2)) mustBe List(1)
+      init(List(1, 2, 3, 4, 5)) mustBe List(1, 2, 3, 4)
+      init(List(1, 2)) mustBe List(1)
       init(List(1)) mustBe Nil
       intercept[IllegalArgumentException](init(Nil)).getMessage mustBe "list should not be empty"
     }
-    "length" in {
+    "length() using foldRight" in {
       FunctionalDataStructures.length(Nil) mustBe 0
       FunctionalDataStructures.length(List(1)) mustBe 1
-      FunctionalDataStructures.length(List(1,2,3)) mustBe 3
+      FunctionalDataStructures.length(List(1, 2, 3)) mustBe 3
     }
+
+    "foldLeft() tail recursive" in {
+      FunctionalDataStructures.foldLeft(List[Int](), 0)(_ + _) mustBe 0
+      FunctionalDataStructures.foldLeft(List(5), 5)(_ + _) mustBe 10
+      FunctionalDataStructures.foldLeft(List(5, 5), 0)(_ + _) mustBe 10
+      FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ + _) mustBe 15
+      FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ * _) mustBe 125
+    }
+
   }
 
 }
