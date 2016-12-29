@@ -97,14 +97,14 @@ object ab_IntroToFunProg {
      *  fold left:                 (z) -> a -> b -> c
      *  fold right via fold left:  (z) -> c -> b -> a
      */
-    def foldRightViaFoldLeft[A, Z](ls: List[A], z: Z)(f: (A, Z) => Z): Z =
+    def foldRight[A, Z](ls: List[A], z: Z)(f: (A, Z) => Z): Z =
       foldLeft(ls.reverse, z)((a, b) => f(b, a))
 
     /**
      * append in terms of foldRight
      */
     def appendViaFoldRight[A](ls: List[A], z: A): List[A] =
-      foldRightViaFoldLeft(ls, List(z))(_ :: _)
+      foldRight(ls, List(z))(_ :: _)
 
     /**
      * append in terms of foldLeft
@@ -116,7 +116,7 @@ object ab_IntroToFunProg {
      * Write a function that concatenates a list of lists into a single list
      */
     def flatten1[A](ls: List[List[A]]): List[A] =
-      foldRightViaFoldLeft(ls, List.empty[A])(_ ++ _)
+      foldRight(ls, List.empty[A])(_ ++ _)
 
     def flatten2[A](ls: List[List[A]]): List[A] = ls.flatten
 
@@ -128,6 +128,12 @@ object ab_IntroToFunProg {
 
     def flatten4[A](ls: List[List[A]]): List[A] = ls.flatMap(identity)
 
+    /**
+     * implement map using fold:
+     *
+     * def map[A,B](as: List[A])(f: A => B): List[B]
+     */
+    def map[A, B](as: List[A])(f: A => B): List[B] = foldRight(as, List.empty[B])((a, acc) => f(a) :: acc)
   }
 
 }

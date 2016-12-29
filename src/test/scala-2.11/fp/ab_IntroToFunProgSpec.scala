@@ -93,7 +93,7 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       FunctionalDataStructures.reverse(List(1, 2, 3)) mustBe List(3, 2, 1)
     }
     "foldRight() in terms of foldLeft" in {
-      foldRightViaFoldLeft(List("a", "b"), "c")(_ + _) mustBe "abc"
+      foldRight(List("a", "b"), "c")(_ + _) mustBe "abc"
     }
 
     "append in terms of foldRight" in {
@@ -105,11 +105,15 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       appendViaFoldLeft(Nil, 1) mustBe List(1)
       appendViaFoldLeft(List(1, 2, 3), 4) mustBe List(1, 2, 3, 4)
     }
+
     "flatten" in {
       flatten1(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
       flatten2(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
       flatten3(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
       flatten4(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
+    }
+    "map via fold" in {
+      map(List(1, 2, 3))("" + _) mustBe List("1", "2", "3")
     }
 
   }
