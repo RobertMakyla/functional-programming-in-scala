@@ -85,11 +85,15 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       FunctionalDataStructures.foldLeft(List(5, 5), 0)(_ + _) mustBe 10
       FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ + _) mustBe 15
       FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ * _) mustBe 125
+      FunctionalDataStructures.foldLeft(List("a", "b"), "c")(_ + _) mustBe "cab"
     }
     "reverse() using fold" in {
       FunctionalDataStructures.reverse(Nil) mustBe Nil
       FunctionalDataStructures.reverse(List(1)) mustBe List(1)
       FunctionalDataStructures.reverse(List(1, 2, 3)) mustBe List(3, 2, 1)
+    }
+    "foldRight() in terms of foldLeft" in {
+      foldRightViaFoldLeft(List("a", "b"), "c")(_ + _) mustBe "abc"
     }
 
   }

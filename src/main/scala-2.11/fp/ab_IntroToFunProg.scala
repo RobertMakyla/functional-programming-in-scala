@@ -88,6 +88,13 @@ object ab_IntroToFunProg {
      * reverse a list using fold
      */
     def reverse[A](ls: List[A]): List[A] = ls.foldLeft(List.empty[A])((acc, elem) => elem :: acc)
+
+    /**
+     * foldRight in terms of foldLeft
+     */
+    def foldRightViaFoldLeft[A, Z](ls: List[A], z: Z)(f: (A, Z) => Z): Z =
+      foldLeft(ls.reverse, z)((a, b) => f(b, a))
+
   }
 
 }
