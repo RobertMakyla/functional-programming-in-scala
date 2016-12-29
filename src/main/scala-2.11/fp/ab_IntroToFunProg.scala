@@ -112,6 +112,22 @@ object ab_IntroToFunProg {
     def appendViaFoldLeft[A](ls: List[A], z: A): List[A] =
       foldLeft(ls.reverse, List.empty[A])( (a,b) => b :: a) ++ List(z)
 
+    /**
+     * Write a function that concatenates a list of lists into a single list
+     */
+    def flatten1[A](ls: List[List[A]]): List[A] =
+      foldRightViaFoldLeft(ls, List.empty[A])(_ ++ _)
+
+    def flatten2[A](ls: List[List[A]]): List[A] = ls.flatten
+
+    def flatten3[A](ls: List[List[A]]): List[A] =
+      for {
+        singleList <- ls
+        elem <- singleList
+      } yield elem
+
+    def flatten4[A](ls: List[List[A]]): List[A] = ls.flatMap(identity)
+
   }
 
 }
