@@ -91,6 +91,11 @@ object ab_IntroToFunProg {
 
     /**
      * foldRight in terms of foldLeft
+     *
+     *  list(a, b, c)
+     *
+     *  fold left:                 (z) -> a -> b -> c
+     *  fold right via fold left:  (z) -> c -> b -> a
      */
     def foldRightViaFoldLeft[A, Z](ls: List[A], z: Z)(f: (A, Z) => Z): Z =
       foldLeft(ls.reverse, z)((a, b) => f(b, a))
