@@ -100,6 +100,18 @@ object ab_IntroToFunProg {
     def foldRightViaFoldLeft[A, Z](ls: List[A], z: Z)(f: (A, Z) => Z): Z =
       foldLeft(ls.reverse, z)((a, b) => f(b, a))
 
+    /**
+     * append in terms of foldRight
+     */
+    def appendViaFoldRight[A](ls: List[A], z: A): List[A] =
+      foldRightViaFoldLeft(ls, List(z))(_ :: _)
+
+    /**
+     * append in terms of foldLeft
+     */
+    def appendViaFoldLeft[A](ls: List[A], z: A): List[A] =
+      foldLeft(ls.reverse, List.empty[A])( (a,b) => b :: a) ++ List(z)
+
   }
 
 }

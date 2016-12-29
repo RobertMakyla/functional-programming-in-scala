@@ -96,6 +96,16 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       foldRightViaFoldLeft(List("a", "b"), "c")(_ + _) mustBe "abc"
     }
 
+    "append in terms of foldRight" in {
+      appendViaFoldRight(Nil, 1) mustBe List(1)
+      appendViaFoldRight(List(1, 2, 3), 4) mustBe List(1, 2, 3, 4)
+    }
+
+    "append in terms of foldLeft" in {
+      appendViaFoldLeft(Nil, 1) mustBe List(1)
+      appendViaFoldLeft(List(1, 2, 3), 4) mustBe List(1, 2, 3, 4)
+    }
+
   }
 
 }
