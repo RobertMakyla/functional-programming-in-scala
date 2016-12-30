@@ -132,6 +132,11 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       zip(List(1, 2, 3), List(100)) mustBe List(101, 2, 3)
       zip(List(100), List(1, 2, 3)) mustBe List(101, 2, 3)
     }
+    "zipWith" in {
+      zipWith(List(1, 2, 3), List(4, 5, 6))(_ + _) mustBe List(5, 7, 9)
+      zipWith(List(1, 2, 3), List(100))(_ + _) mustBe List(101, 2, 3)
+      zipWith(List(100), List(1, 2, 3))(_ + _) mustBe List(101, 2, 3)
+    }
 
   }
 

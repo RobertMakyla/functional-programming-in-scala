@@ -169,6 +169,17 @@ object ab_IntroToFunProg {
       case (aHead :: aTail, bHead :: bTail) => aHead + bHead :: zip(aTail, bTail)
     }
 
+    /**
+     * Generalize zip to take any type and zipping function:
+     *
+     * zipWith
+     */
+    def zipWith[A](a: List[A], b: List[A])(f: (A, A) => A): List[A] = (a, b) match {
+      case (Nil, _) => b
+      case (_, Nil) => a
+      case (aHead :: aTail, bHead :: bTail) => f(aHead, bHead) :: zipWith(aTail, bTail)(f)
+    }
+
   }
 
 }
