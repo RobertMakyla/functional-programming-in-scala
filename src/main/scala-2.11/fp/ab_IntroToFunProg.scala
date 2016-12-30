@@ -153,6 +153,13 @@ object ab_IntroToFunProg {
       (a, acc) => f(a) ++ acc
     }
 
+    /**
+     * Use flatMap to implement filter.
+     */
+    def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] = flatMap[A, A](as) {
+      a => if (f(a)) List(a) else Nil
+    }
+
   }
 
 }

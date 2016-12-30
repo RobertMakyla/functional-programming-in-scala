@@ -107,10 +107,13 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     }
 
     "flatten" in {
-      flatten1(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
-      flatten2(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
-      flatten3(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
-      flatten4(List(List(1), List(2), List(3, 4), Nil, List(5))) mustBe List(1, 2, 3, 4, 5)
+      val input = List(List(1), List(2), List(3, 4), Nil, List(5))
+      val output = List(1, 2, 3, 4, 5)
+
+      flatten1(input) mustBe output
+      flatten2(input) mustBe output
+      flatten3(input) mustBe output
+      flatten4(input) mustBe output
     }
     "map via fold" in {
       map(List(1, 2, 3))("" + _) mustBe List("1", "2", "3")
@@ -120,6 +123,9 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     }
     "flatMap" in {
       flatMap(List(1, 2, 3))(i => List(i, i)) mustBe List(1, 1, 2, 2, 3, 3)
+    }
+    "filter via fatMap" in {
+      filterViaFlatMap(List(1, 2, 3, 4, 5, 6))(_ % 2 == 0) mustBe List(2, 4, 6)
     }
 
   }
