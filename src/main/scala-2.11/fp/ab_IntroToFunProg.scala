@@ -160,6 +160,15 @@ object ab_IntroToFunProg {
       a => if (f(a)) List(a) else Nil
     }
 
+    /**
+     * zip adding Int's
+     */
+    def zip(a: List[Int], b: List[Int]): List[Int] = (a, b) match {
+      case (Nil, _) => b
+      case (_, Nil) => a
+      case (aHead :: aTail, bHead :: bTail) => aHead + bHead :: zip(aTail, bTail)
+    }
+
   }
 
 }

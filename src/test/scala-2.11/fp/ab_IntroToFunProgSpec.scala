@@ -127,6 +127,11 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     "filter via fatMap" in {
       filterViaFlatMap(List(1, 2, 3, 4, 5, 6))(_ % 2 == 0) mustBe List(2, 4, 6)
     }
+    "zip for two lists of Ints" in {
+      zip(List(1, 2, 3), List(4, 5, 6)) mustBe List(5, 7, 9)
+      zip(List(1, 2, 3), List(100)) mustBe List(101, 2, 3)
+      zip(List(100), List(1, 2, 3)) mustBe List(101, 2, 3)
+    }
 
   }
 
