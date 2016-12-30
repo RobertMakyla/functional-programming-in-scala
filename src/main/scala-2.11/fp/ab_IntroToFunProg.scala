@@ -197,6 +197,21 @@ object ab_IntroToFunProg {
 
     */
 
+    /**
+     * implement hasSubsequence for checking whether a List contains another List as a subsequence
+     *
+     * def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean
+     */
+    def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+      val sublistSize = sub.size
+      if(sup.size < sublistSize) false
+      else if(sup.size == sublistSize) sup == sub
+      else {
+        val toCheck = sup.take(sublistSize)
+        toCheck == sub || hasSubsequence(sup.tail, sub)
+      }
+
+    }
   }
 
 }

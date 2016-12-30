@@ -137,6 +137,18 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       zipWith(List(1, 2, 3), List(100))(_ + _) mustBe List(101, 2, 3)
       zipWith(List(100), List(1, 2, 3))(_ + _) mustBe List(101, 2, 3)
     }
+    "hasSubsequence" in {
+      //impossible due to size difference
+      hasSubsequence(Nil, List(1)) mustBe false
+      hasSubsequence(List(1), List(1,2)) mustBe false
+      //possible due to size difference
+      hasSubsequence(Nil, Nil) mustBe true
+      hasSubsequence(List(1, 2, 3, 4), Nil) mustBe true
+      hasSubsequence(List(1, 2, 3, 4), List(2)) mustBe true
+      hasSubsequence(List(1, 2, 3, 4), List(2, 4)) mustBe false
+      hasSubsequence(List(1, 2, 3, 4), List(3, 4)) mustBe true
+      hasSubsequence(List(1, 2, 3, 4), List(1, 2, 3, 4)) mustBe true
+    }
 
   }
 
