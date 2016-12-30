@@ -80,17 +80,17 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       FunctionalDataStructures.length(List(1, 2, 3)) mustBe 3
     }
     "foldLeft() tail recursive" in {
-      FunctionalDataStructures.foldLeft(List[Int](), 0)(_ + _) mustBe 0
-      FunctionalDataStructures.foldLeft(List(5), 5)(_ + _) mustBe 10
-      FunctionalDataStructures.foldLeft(List(5, 5), 0)(_ + _) mustBe 10
-      FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ + _) mustBe 15
-      FunctionalDataStructures.foldLeft(List(5, 5), 5)(_ * _) mustBe 125
-      FunctionalDataStructures.foldLeft(List("a", "b"), "c")(_ + _) mustBe "cab"
+      foldLeft(List[Int](), 0)(_ + _) mustBe 0
+      foldLeft(List(5), 5)(_ + _) mustBe 10
+      foldLeft(List(5, 5), 0)(_ + _) mustBe 10
+      foldLeft(List(5, 5), 5)(_ + _) mustBe 15
+      foldLeft(List(5, 5), 5)(_ * _) mustBe 125
+      foldLeft(List("a", "b"), "c")(_ + _) mustBe "cab"
     }
     "reverse() using fold" in {
-      FunctionalDataStructures.reverse(Nil) mustBe Nil
-      FunctionalDataStructures.reverse(List(1)) mustBe List(1)
-      FunctionalDataStructures.reverse(List(1, 2, 3)) mustBe List(3, 2, 1)
+      reverse(Nil) mustBe Nil
+      reverse(List(1)) mustBe List(1)
+      reverse(List(1, 2, 3)) mustBe List(3, 2, 1)
     }
     "foldRight() in terms of foldLeft" in {
       foldRight(List("a", "b"), "c")(_ + _) mustBe "abc"
@@ -114,6 +114,9 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     }
     "map via fold" in {
       map(List(1, 2, 3))("" + _) mustBe List("1", "2", "3")
+    }
+    "filter" in {
+      filter(List(1,2,3,4,5,6))( _ % 2==0) mustBe List(2,4,6)
     }
 
   }

@@ -134,6 +134,16 @@ object ab_IntroToFunProg {
      * def map[A,B](as: List[A])(f: A => B): List[B]
      */
     def map[A, B](as: List[A])(f: A => B): List[B] = foldRight(as, List.empty[B])((a, acc) => f(a) :: acc)
+
+    /**
+     * Write a function filter:
+     *
+     * def filter[A](as: List[A])(f: A => Boolean): List[A]
+     */
+    def filter[A](as: List[A])(f: A => Boolean): List[A] = foldRight(as, List.empty[A]) {
+      (a, acc) => if (f(a)) a :: acc else acc
+    }
+
   }
 
 }
