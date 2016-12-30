@@ -144,6 +144,15 @@ object ab_IntroToFunProg {
       (a, acc) => if (f(a)) a :: acc else acc
     }
 
+    /**
+     * implement flatMap:
+     *
+     * def flatMap[A,B](as: List[A])(f: A => List[B]): List[B]
+     */
+    def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = foldRight(as, List.empty[B]) {
+      (a, acc) => f(a) ++ acc
+    }
+
   }
 
 }

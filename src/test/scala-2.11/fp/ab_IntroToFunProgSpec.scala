@@ -116,7 +116,10 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       map(List(1, 2, 3))("" + _) mustBe List("1", "2", "3")
     }
     "filter" in {
-      filter(List(1,2,3,4,5,6))( _ % 2==0) mustBe List(2,4,6)
+      filter(List(1, 2, 3, 4, 5, 6))(_ % 2 == 0) mustBe List(2, 4, 6)
+    }
+    "flatMap" in {
+      flatMap(List(1, 2, 3))(i => List(i, i)) mustBe List(1, 1, 2, 2, 3, 3)
     }
 
   }
