@@ -180,6 +180,23 @@ object ab_IntroToFunProg {
       case (aHead :: aTail, bHead :: bTail) => f(aHead, bHead) :: zipWith(aTail, bTail)(f)
     }
 
+    /* ReduceLeft / ScanLeft :
+
+     List("A", "B", "C").foldLeft("z")(_ + _)  // "zABC"
+     List(1, 2, 3).foldLeft(0)(_ - _)      // 0 - 1 - 2 - 3
+
+     List("A", "B", "C").reduceLeft(_ + _)   // "ABC"
+     List(1, 2, 3).reduceLeft(_ - _)     // 1 - 2 - 3
+
+       - so it's like fold but without starting value
+
+     List("A", "B", "C").scanLeft("z")(_ + _)  // List("z", "zA", "zAB", "zABC")
+     List(1, 2, 3).scanLeft(0)(_ - _)         // List(0, 0-1, 0-1-2, 0-1-2-3)
+
+       - so it returns each step of folding as a list
+
+    */
+
   }
 
 }
