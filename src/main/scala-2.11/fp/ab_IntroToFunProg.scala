@@ -232,6 +232,15 @@ object ab_IntroToFunProg {
       case Leaf(v) => v
     }
 
+    /** Write a function depth that returns the maximum path length from the root of a tree to any leaf */
+    def depth[A](tree: Tree[A]): Int = tree match {
+      case Branch(l, r) =>
+        val depthLeft = depth(l)
+        val depthRight = depth(r)
+        1 + (if (depthLeft > depthRight) depthLeft else depthRight)
+      case Leaf(_) => 1
+    }
+
   }
 
 }
