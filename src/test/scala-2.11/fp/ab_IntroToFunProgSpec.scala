@@ -153,6 +153,10 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     "tree size" in {
       FunctionalDataStructures.size(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))) mustBe 5
     }
+    "tree max" in {
+      FunctionalDataStructures.max(Branch(Branch(Leaf(2), Leaf(9)), Branch(Leaf(5), Leaf(3)))) mustBe 9
+    }
+
   }
 
 }

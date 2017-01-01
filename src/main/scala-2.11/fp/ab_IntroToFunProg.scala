@@ -223,6 +223,15 @@ object ab_IntroToFunProg {
       case Leaf(_) => 1
     }
 
+    /** Write a function maximum that returns the maximum element in a Tree[Int] */
+    def max(tree: Tree[Int]): Int = tree match {
+      case Branch(l, r) =>
+        val maxLeft = max(l)
+        val maxRight = max(r)
+        if (maxLeft > maxRight) maxLeft else maxRight
+      case Leaf(v) => v
+    }
+
   }
 
 }
