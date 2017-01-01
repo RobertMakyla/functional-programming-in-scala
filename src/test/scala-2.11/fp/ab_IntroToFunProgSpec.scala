@@ -150,6 +150,9 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       hasSubsequence(List(1, 2, 3, 4), List(1, 2, 3, 4)) mustBe true
     }
 
+    "tree size" in {
+      FunctionalDataStructures.size(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))) mustBe 5
+    }
   }
 
 }
