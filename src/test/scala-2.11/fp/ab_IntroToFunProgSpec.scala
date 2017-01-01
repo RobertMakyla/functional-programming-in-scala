@@ -161,6 +161,10 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
         Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Branch(Leaf(2), Branch(Leaf(2), Leaf(3)))))
       } mustBe 5
     }
+    "tree map" in {
+      FunctionalDataStructures.map(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))))("" + _) mustBe
+        Branch(Leaf("1"), Branch(Leaf("2"), Leaf("3")))
+    }
 
   }
 
