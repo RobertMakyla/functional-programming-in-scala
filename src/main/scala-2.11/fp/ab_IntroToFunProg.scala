@@ -213,40 +213,63 @@ object ab_IntroToFunProg {
 
     }
 
+    /*
+     * TREE
+     */
     sealed trait Tree[+A]
     case class Leaf[A](value: A) extends Tree[A]
     case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
 
     /** Write a function size that counts the number of nodes (leaves and branches) in a tree */
-    def size[A](tree: Tree[A]): Int = tree match {
-      case Branch(l, r) => size(l) + size (r) + 1
+    def size[A](t: Tree[A]): Int = t match {
+      case Branch(l, r) => size(l) + size(r) + 1
       case Leaf(_) => 1
     }
 
     /** Write a function maximum that returns the maximum element in a Tree[Int] */
-    def max(tree: Tree[Int]): Int = tree match {
-      case Branch(l, r) =>
-        val maxLeft = max(l)
-        val maxRight = max(r)
-        if (maxLeft > maxRight) maxLeft else maxRight
+    def max(t: Tree[Int]): Int = t match {
+      case Branch(l, r) => max(l) max max(r)
       case Leaf(v) => v
     }
 
     /** Write a function depth that returns the maximum path length from the root of a tree to any leaf */
-    def depth[A](tree: Tree[A]): Int = tree match {
-      case Branch(l, r) =>
-        val depthLeft = depth(l)
-        val depthRight = depth(r)
-        1 + (if (depthLeft > depthRight) depthLeft else depthRight)
+    def depth[A](t: Tree[A]): Int = t match {
+      case Branch(l, r) => 1 + (depth(l) max depth(r))
       case Leaf(_) => 1
     }
 
     /** Write a function map , analogous to the method of the same name on List ,
      * that modifies each element in a tree with a given function */
-    def map[A, B](tree: Tree[A])(f: A => B): Tree[B] = tree match {
+    def map[A, B](t: Tree[A])(f: A => B): Tree[B] = t match {
       case Branch(l, r) => Branch(map(l)(f), map(r)(f))
       case Leaf(a) => Leaf(f(a))
     }
+
+    /** tree fold !!!
+     *
+     * As tree is 2d structure (branches next to each other and branches containing other branches)
+     * we need 2 functions to fold it :
+     *
+     * - f: for mapping value of each leaf
+     * - g: for merging left and right piece of branch into one value
+     * */
+    def fold[A, Z](tree: Tree[A])(f: A => Z)(g: (Z, Z) => Z): Z = tree match {
+      case Branch(l, r) => g(fold(l)(f)(g), fold(r)(f)(g))
+      case Leaf(a) => f(a)
+    }
+
+    def sizeViaFold[A](t: Tree[A]): Int =
+      fold(t)(_ => 1)(_ + _ + 1) // leftSize + rightSize + 1
+
+    def maxViaFold(t: Tree[Int]): Int =
+      fold(t)(identity)(_ max _) // leftMax max rightMax
+
+    def depthViaFold[A](t: Tree[A]): Int =
+      fold(t)(_ => 1)((ld, rd) => (ld max rd) + 1) // (leftDepth max rightDepth) + 1
+
+    def mapViaFold[A, B](t: Tree[A])(f: A => B): Tree[B] =
+      fold(t)(a => Leaf(f(a)): Tree[B])(Branch(_, _)) // Branch(leftMapped, rightMapped)
+
   }
 
 }

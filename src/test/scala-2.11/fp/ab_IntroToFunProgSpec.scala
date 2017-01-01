@@ -150,20 +150,26 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       hasSubsequence(List(1, 2, 3, 4), List(1, 2, 3, 4)) mustBe true
     }
 
+    val tree = Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Branch(Leaf(9), Branch(Leaf(2), Leaf(3)))))
+
     "tree size" in {
-      FunctionalDataStructures.size(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))) mustBe 5
+      FunctionalDataStructures.size(tree) mustBe 11
+      FunctionalDataStructures.sizeViaFold(tree) mustBe 11
     }
     "tree max" in {
-      FunctionalDataStructures.max(Branch(Branch(Leaf(2), Leaf(9)), Branch(Leaf(5), Leaf(3)))) mustBe 9
+      FunctionalDataStructures.max(tree) mustBe 9
+      FunctionalDataStructures.maxViaFold(tree) mustBe 9
     }
     "tree depth" in {
-      FunctionalDataStructures.depth{
-        Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Branch(Leaf(2), Branch(Leaf(2), Leaf(3)))))
-      } mustBe 5
+      FunctionalDataStructures.depth(tree) mustBe 5
+      FunctionalDataStructures.depthViaFold(tree) mustBe 5
     }
     "tree map" in {
-      FunctionalDataStructures.map(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))))("" + _) mustBe
-        Branch(Leaf("1"), Branch(Leaf("2"), Leaf("3")))
+      FunctionalDataStructures.map(tree)("" + _) mustBe
+        Branch(Leaf("1"), Branch(Branch(Leaf("2"), Leaf("3")), Branch(Leaf("9"), Branch(Leaf("2"), Leaf("3")))))
+
+      FunctionalDataStructures.mapViaFold(tree)("" + _) mustBe
+        Branch(Leaf("1"), Branch(Branch(Leaf("2"), Leaf("3")), Branch(Leaf("9"), Branch(Leaf("2"), Leaf("3")))))
     }
 
   }
