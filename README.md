@@ -35,7 +35,9 @@ eg of not RT:
  sb.append(", World")   // Hello, World
  sb.append(", World")   // Hello, World, World
 ```
- 
+
+function which may *throw exception* - breaks RT because it doesn't always return what we expect
+
 ## Why use Pure Functions ?
  
 With PF we don't have to care about :
