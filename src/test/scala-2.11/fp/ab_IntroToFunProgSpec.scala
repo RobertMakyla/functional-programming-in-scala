@@ -174,4 +174,20 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
   }
 
+  "Handling Errors Without Exceptions" - {
+    import HandlingErrorsWithoutExceptions._
+
+    "implement Option functions" in {
+      MySome(123).map(_ * 100) mustBe MySome(12300)
+      MySome(123).flatMap(i => MySome(i * 100)) mustBe MySome(12300)
+      MySome(123).filter(_ > 100) mustBe MySome(123)
+      MySome(123).filter(_ < 100) mustBe MyNone
+
+      MySome(123).getOrElse(0) mustBe 123
+      (MyNone: MyOption[Int]).getOrElse(0) mustBe 0
+
+      MySome(123).orElse(MySome(4)) mustBe MySome(123)
+      (MyNone: MyOption[Int]).orElse(MySome(4)) mustBe MySome(4)
+    }
+  }
 }

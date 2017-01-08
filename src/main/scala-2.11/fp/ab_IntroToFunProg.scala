@@ -92,10 +92,10 @@ object ab_IntroToFunProg {
     /**
      * foldRight in terms of foldLeft
      *
-     *  list(a, b, c)
+     * list(a, b, c)
      *
-     *  fold left:                 (z) -> a -> b -> c
-     *  fold right via fold left:  (z) -> c -> b -> a
+     * fold left:                 (z) -> a -> b -> c
+     * fold right via fold left:  (z) -> c -> b -> a
      */
     def foldRight[A, Z](ls: List[A], z: Z)(f: (A, Z) => Z): Z =
       foldLeft(ls.reverse, z)((a, b) => f(b, a))
@@ -110,7 +110,7 @@ object ab_IntroToFunProg {
      * append in terms of foldLeft
      */
     def appendViaFoldLeft[A](ls: List[A], z: A): List[A] =
-      foldLeft(ls.reverse, List.empty[A])( (a,b) => b :: a) ++ List(z)
+      foldLeft(ls.reverse, List.empty[A])((a, b) => b :: a) ++ List(z)
 
     /**
      * Write a function that concatenates a list of lists into a single list
@@ -204,8 +204,8 @@ object ab_IntroToFunProg {
      */
     def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
       val sublistSize = sub.size
-      if(sup.size < sublistSize) false
-      else if(sup.size == sublistSize) sup == sub
+      if (sup.size < sublistSize) false
+      else if (sup.size == sublistSize) sup == sub
       else {
         val toCheck = sup.take(sublistSize)
         toCheck == sub || hasSubsequence(sup.tail, sub)
@@ -217,7 +217,9 @@ object ab_IntroToFunProg {
      * TREE
      */
     sealed trait Tree[+A]
+
     case class Leaf[A](value: A) extends Tree[A]
+
     case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
 
     /** Write a function size that counts the number of nodes (leaves and branches) in a tree */
@@ -269,6 +271,61 @@ object ab_IntroToFunProg {
 
     def mapViaFold[A, B](t: Tree[A])(f: A => B): Tree[B] =
       fold(t)(a => Leaf(f(a)): Tree[B])(Branch(_, _)) // Branch(leftMapped, rightMapped)
+
+  }
+
+  object HandlingErrorsWithoutExceptions {
+
+    /*
+     * Exceptions break Referential Transparency
+     *
+     * -- because they make result unexpected.
+     *    eg: func:Int=>Int may not return Int but throw an exception
+     *
+     * Exceptions should be used only for necessary error handling (IO/Network) and not flow control, because:
+     *
+     *  -- they're not type-safe (less control over returned type)
+     *
+     *     (Option/Either are type safe - so we have control)
+     *
+     *  -- they don't work with higher-order functions
+     *     eg. map(func: A=>B) expects func not to throw anything because there's no mechanism
+     *         how to behave if for 1 element an exception is thrown
+     *
+     *     (Option/Either work fine with higher order functions)
+     */
+
+    sealed trait MyOption[+A] {
+      def map[B](f: A => B): MyOption[B] = this match {
+        case MySome(a) => MySome(f(a))
+        case MyNone => MyNone
+      }
+
+      def flatMap[B](f: A => MyOption[B]): MyOption[B] = this match {
+        case MySome(a) => f(a)
+        case MyNone => MyNone
+      }
+
+      /** Convert Some to None if the value doesn’t satisfy f */
+      def filter(f: A => Boolean): MyOption[A] = this match {
+        case MySome(a) if f(a) => MySome(a)
+        case _ => MyNone
+      }
+
+      def getOrElse[B >: A](default: => B): B = this match {
+        case MySome(a) => a
+        case MyNone => default
+      }
+
+      def orElse[B >: A](ob: => MyOption[B]): MyOption[B] = this match {
+        case MySome(a) => this
+        case MyNone => ob
+      }
+    }
+
+    case class MySome[A](get: A) extends MyOption[A]
+
+    case object MyNone extends MyOption[Nothing]
 
   }
 
