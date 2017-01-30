@@ -193,7 +193,9 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     "map2() taking 2 Options" in {
       map2(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
       map2(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
-      map2(None, Some(2))((a: String, b: Int) => a(b)) mustBe None
+
+      map2ViaForComprehension(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
+      map2ViaForComprehension(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
     }
 
     "sequence() transforming a list of Options to Option of List" in {

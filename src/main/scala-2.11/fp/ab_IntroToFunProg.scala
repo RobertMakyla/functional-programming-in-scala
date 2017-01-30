@@ -336,6 +336,12 @@ object ab_IntroToFunProg {
       case _ => None
     }
 
+    // using for-comprehension :)
+    def map2ViaForComprehension[A, B, C](maybeA: Option[A], maybeB: Option[B])(f: (A, B) => C): Option[C] = for {
+      a <- maybeA
+      b <- maybeB
+    } yield f(a, b)
+
     /*
      * Monad Transforming
      */
