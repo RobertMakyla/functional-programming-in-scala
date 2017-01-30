@@ -336,6 +336,17 @@ object ab_IntroToFunProg {
       case _ => None
     }
 
+    /*
+     * Monad Transforming
+     */
+
+    /**
+     * Transform a list of Options into Option of List
+     */
+    def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
+      case h :: tail => map2(h, sequence(tail))( _ :: _)
+      case _ => Some(Nil)
+    }
   }
 
 }
