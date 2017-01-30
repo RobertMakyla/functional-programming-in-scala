@@ -140,7 +140,7 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     "hasSubsequence" in {
       //impossible due to size difference
       hasSubsequence(Nil, List(1)) mustBe false
-      hasSubsequence(List(1), List(1,2)) mustBe false
+      hasSubsequence(List(1), List(1, 2)) mustBe false
       //possible due to size difference
       hasSubsequence(Nil, Nil) mustBe true
       hasSubsequence(List(1, 2, 3, 4), Nil) mustBe true
@@ -188,6 +188,12 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
       MySome(123).orElse(MySome(4)) mustBe MySome(123)
       (MyNone: MyOption[Int]).orElse(MySome(4)) mustBe MySome(4)
+    }
+
+    "map2() taking 2 Options" in {
+      map2(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
+      map2(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
+      map2(None, Some(2))((a: String, b: Int) => a(b)) mustBe None
     }
   }
 }

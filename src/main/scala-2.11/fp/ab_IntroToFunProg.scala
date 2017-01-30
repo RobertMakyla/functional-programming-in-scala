@@ -247,7 +247,7 @@ object ab_IntroToFunProg {
       case Leaf(a) => Leaf(f(a))
     }
 
-    /** tree fold !!!
+    /** Folding a TREE !!!
      *
      * As tree is 2d structure (branches next to each other and branches containing other branches)
      * we need 2 functions to fold it :
@@ -326,6 +326,15 @@ object ab_IntroToFunProg {
     case class MySome[A](get: A) extends MyOption[A]
 
     case object MyNone extends MyOption[Nothing]
+
+    /**
+     * Write a generic function map2 that combines two Option values using a function.
+     * If either Option value is None , then the return value is too.
+     */
+    def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = (a, b) match {
+      case (Some(realA: A), Some(realB: B)) => Some(f(realA, realB))
+      case _ => None
+    }
 
   }
 
