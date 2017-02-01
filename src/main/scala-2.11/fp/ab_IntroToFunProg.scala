@@ -353,6 +353,36 @@ object ab_IntroToFunProg {
       case h :: tail => map2(h, sequence(tail))( _ :: _)
       case _ => Some(Nil)
     }
+
+    /**
+     * Implement methods of Either
+     */
+    sealed trait MyEither[+L, +R] {
+      def map[RR](f: R => RR): MyEither[L, RR] = this match {
+        case MyRight(v) => MyRight(f(v))
+        case MyLeft(v) => MyLeft(v)
+      }
+
+      def flatMap[LL >: L, B](f: R => MyEither[LL, B]): MyEither[LL, B] = this match {
+        case MyRight(v) => f(v)
+        case MyLeft(v) => MyLeft(v)
+      }
+
+      def orElse[LL >: L,RR >: R](b: => MyEither[LL, RR]): MyEither[LL, RR] = this match {
+        case MyRight(v) => MyRight(v)
+        case MyLeft(_) => b
+      }
+
+      def map2[LL >: L, R2, X](that: MyEither[LL, R2])(f: (R, R2) => X): MyEither[LL, X] =
+        for {
+          a <- this
+          b <- that
+        } yield f(a, b)
+    }
+    case class MyLeft[+L](value: L) extends MyEither[L, Nothing]
+    case class MyRight[+R](value: R) extends MyEither[Nothing, R]
+
+
   }
 
 }

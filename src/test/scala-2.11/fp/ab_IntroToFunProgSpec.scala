@@ -199,8 +199,27 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     }
 
     "sequence() transforming a list of Options to Option of List" in {
-      sequence(List(Some(1),Some(2),Some(3))) mustBe Some(List(1,2,3))
-      sequence(List(Some(1),Some(2),None)) mustBe None
+      sequence(List(Some(1), Some(2), Some(3))) mustBe Some(List(1, 2, 3))
+      sequence(List(Some(1), Some(2), None)) mustBe None
     }
+
+    "implement Either functions" in {
+      val r: MyEither[String, Int] = MyRight(123)
+      val rr: MyEither[String, Int] = MyRight(10)
+      val l: MyEither[String, Int] = MyLeft("error")
+
+      r.map(_ * 100) mustBe MyRight(12300)
+      l.map(_ * 100) mustBe MyLeft("error")
+
+      r.flatMap(i => MyRight(i * 100)) mustBe MyRight(12300)
+      r.flatMap(i => MyLeft("" + i)) mustBe MyLeft("123")
+
+      l.flatMap(i => MyRight(i * 100)) mustBe MyLeft("error")
+      l.flatMap(i => MyLeft("" + i)) mustBe MyLeft("error")
+
+      r.map2(l)(_ * _) mustBe MyLeft("error")
+      r.map2(rr)(_ * _) mustBe MyRight(1230)
+    }
+
   }
 }
