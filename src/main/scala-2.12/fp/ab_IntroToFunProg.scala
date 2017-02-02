@@ -1,6 +1,7 @@
 package fp
 
 import scala.annotation.tailrec
+import scala.util.Try
 
 object ab_IntroToFunProg {
 
@@ -385,4 +386,74 @@ object ab_IntroToFunProg {
 
   }
 
+  object forComprehensionUnderTheHood {
+
+    /**
+     * -------------------------------------
+     *  1 map :
+     * -------------------------------------
+     *
+     * for{
+     *    a <- monadOfA          // first expression: Monad[A]
+     * } yield a2b(a)            // map:              A => B
+     *                           // result:           Monad[B]
+     *
+     * eg: Some(123).map( i => "" + i )
+     *
+     * -------------------------------------
+     *  1 flatMap + 1 map :
+     * -------------------------------------
+     *
+     * for{
+     *    a <- monadOfA           // first expression: Monad[A]
+     *    b <- fromAtoMonadOfB    // flatMap function: A => Monad[B]
+     * } yield b2c(b)             // map:              B => C
+     *                            // result:           Monad[C]
+     *
+     * eg: Some(2).flatMap( i => Try{ "Hello"(i) }.toOption ) map ( c => c.toUpper)
+     *
+     */
+    def isForComprehensionOptionWorking = {
+      def maybeIndex: Option[Int] = Some(0)
+      def maybeCharFrom(index: Int, s: String): Option[Char] = Try {
+        s(index)
+      }.toOption
+
+      //for comprehension
+      val result1: Option[Char] = for {
+        i <- maybeIndex
+        c <- maybeCharFrom(i, "robert")
+      } yield c.toUpper
+
+      // de-sugared
+      val result2: Option[Char] = maybeIndex.flatMap((i: Int) => maybeCharFrom(i, "robert")).map(_.toUpper)
+
+      result1 == result2
+    }
+
+    /**
+     * Since Scala 2.12 Either has right-biased /bajest/ flatMap,
+     * so we can use it in for-comprehension
+     */
+    def isForComprehensionEitherWorking = {
+      def maybeIndex: util.Either[String, Int] = util.Right(0)
+      def maybeCharFrom(index: Int, s: String): util.Either[String, Char] = try {
+        util.Right(s(index))
+      } catch {
+        case e: Throwable => util.Left(e.getMessage)
+      }
+
+      //for comprehension
+      val result1 = for {
+        i <- maybeIndex
+        c <- maybeCharFrom(i, "robert")
+      } yield c toUpper
+
+      // de-sugared
+      val result2 = maybeIndex.flatMap((i: Int) => maybeCharFrom(i, "robert")).map(_.toUpper)
+
+      result1 == result2
+    }
+
+  }
 }

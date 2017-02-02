@@ -222,4 +222,18 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     }
 
   }
+
+  "For Comprehension (under the hood)" - {
+    import forComprehensionUnderTheHood._
+
+    "with Option" in {
+      isForComprehensionOptionWorking mustBe true
+    }
+
+    "with Either (since scala 2.12 Either has right-biased flatMap)" in {
+      isForComprehensionEitherWorking mustBe true
+    }
+
+  }
+
 }
