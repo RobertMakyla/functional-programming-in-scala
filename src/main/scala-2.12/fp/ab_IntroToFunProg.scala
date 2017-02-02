@@ -1,7 +1,6 @@
 package fp
 
 import scala.annotation.tailrec
-import scala.util.Try
 
 object ab_IntroToFunProg {
 
@@ -387,6 +386,7 @@ object ab_IntroToFunProg {
   }
 
   object forComprehensionUnderTheHood {
+    import scala.util.{Try, Right, Left}
 
     /**
      * -------------------------------------
@@ -415,9 +415,8 @@ object ab_IntroToFunProg {
      */
     def isForComprehensionOptionWorking = {
       def maybeIndex: Option[Int] = Some(0)
-      def maybeCharFrom(index: Int, s: String): Option[Char] = Try {
-        s(index)
-      }.toOption
+      def maybeCharFrom(index: Int, s: String): Option[Char] =
+        Try {s(index)}.toOption
 
       //for comprehension
       val result1: Option[Char] = for {
@@ -436,12 +435,9 @@ object ab_IntroToFunProg {
      * so we can use it in for-comprehension
      */
     def isForComprehensionEitherWorking = {
-      def maybeIndex: util.Either[String, Int] = util.Right(0)
-      def maybeCharFrom(index: Int, s: String): util.Either[String, Char] = try {
-        util.Right(s(index))
-      } catch {
-        case e: Throwable => util.Left(e.getMessage)
-      }
+      def maybeIndex: Either[Throwable, Int] = Right(0)
+      def maybeCharFrom(index: Int, s: String): Either[Throwable, Char] =
+        Try {s(index)}.toEither
 
       //for comprehension
       val result1 = for {
@@ -452,6 +448,7 @@ object ab_IntroToFunProg {
       // de-sugared
       val result2 = maybeIndex.flatMap((i: Int) => maybeCharFrom(i, "robert")).map(_.toUpper)
 
+      //println{s" is $result1 == $result2 ?"}
       result1 == result2
     }
 
