@@ -177,50 +177,53 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
   "Handling Errors Without Exceptions" - {
     import HandlingErrorsWithoutExceptions._
 
-    "implement Option functions" in {
-      MySome(123).map(_ * 100) mustBe MySome(12300)
-      MySome(123).flatMap(i => MySome(i * 100)) mustBe MySome(12300)
-      MySome(123).filter(_ > 100) mustBe MySome(123)
-      MySome(123).filter(_ < 100) mustBe MyNone
+    "Option" - {
+      "map(), flatMap(), filter" in {
+        MySome(123).map(_ * 100) mustBe MySome(12300)
+        MySome(123).flatMap(i => MySome(i * 100)) mustBe MySome(12300)
+        MySome(123).filter(_ > 100) mustBe MySome(123)
+        MySome(123).filter(_ < 100) mustBe MyNone
 
-      MySome(123).getOrElse(0) mustBe 123
-      (MyNone: MyOption[Int]).getOrElse(0) mustBe 0
+        MySome(123).getOrElse(0) mustBe 123
+        (MyNone: MyOption[Int]).getOrElse(0) mustBe 0
 
-      MySome(123).orElse(MySome(4)) mustBe MySome(123)
-      (MyNone: MyOption[Int]).orElse(MySome(4)) mustBe MySome(4)
+        MySome(123).orElse(MySome(4)) mustBe MySome(123)
+        (MyNone: MyOption[Int]).orElse(MySome(4)) mustBe MySome(4)
+      }
+
+      "map2() combining 2 monads into one" in {
+        map2(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
+        map2(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
+
+        map2ViaForComprehension(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
+        map2ViaForComprehension(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
+      }
+
+      "sequence() transforming List[Option[A]] to Option[List[A]]" in {
+        sequenceViaForComprehension(List(Some(1), Some(2), Some(3))) mustBe Some(List(1, 2, 3))
+        sequenceViaForComprehension(List(Some(1), Some(2), None)) mustBe None
+      }
     }
+    "Either" - {
+      "map(), flatMap(), map2() combining 2 monads into one" in {
+        val r: MyEither[String, Int] = MyRight(123)
+        val rr: MyEither[String, Int] = MyRight(10)
+        val l: MyEither[String, Int] = MyLeft("error")
 
-    "map2() taking 2 Options" in {
-      map2(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
-      map2(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
+        r.map(_ * 100) mustBe MyRight(12300)
+        l.map(_ * 100) mustBe MyLeft("error")
 
-      map2ViaForComprehension(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
-      map2ViaForComprehension(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
+        r.flatMap(i => MyRight(i * 100)) mustBe MyRight(12300)
+        r.flatMap(i => MyLeft("" + i)) mustBe MyLeft("123")
+
+        l.flatMap(i => MyRight(i * 100)) mustBe MyLeft("error")
+        l.flatMap(i => MyLeft("" + i)) mustBe MyLeft("error")
+
+        r.map2(l)(_ * _) mustBe MyLeft("error")
+        r.map2(rr)(_ * _) mustBe MyRight(1230)
+      }
+
     }
-
-    "sequence() transforming a list of Options to Option of List" in {
-      sequence(List(Some(1), Some(2), Some(3))) mustBe Some(List(1, 2, 3))
-      sequence(List(Some(1), Some(2), None)) mustBe None
-    }
-
-    "implement Either functions" in {
-      val r: MyEither[String, Int] = MyRight(123)
-      val rr: MyEither[String, Int] = MyRight(10)
-      val l: MyEither[String, Int] = MyLeft("error")
-
-      r.map(_ * 100) mustBe MyRight(12300)
-      l.map(_ * 100) mustBe MyLeft("error")
-
-      r.flatMap(i => MyRight(i * 100)) mustBe MyRight(12300)
-      r.flatMap(i => MyLeft("" + i)) mustBe MyLeft("123")
-
-      l.flatMap(i => MyRight(i * 100)) mustBe MyLeft("error")
-      l.flatMap(i => MyLeft("" + i)) mustBe MyLeft("error")
-
-      r.map2(l)(_ * _) mustBe MyLeft("error")
-      r.map2(rr)(_ * _) mustBe MyRight(1230)
-    }
-
   }
 
   "For Comprehension (under the hood)" - {

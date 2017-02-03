@@ -1,7 +1,7 @@
 package fp
 
 import scala.annotation.tailrec
-
+import scala.util.{Try, Right, Left, Either}
 object ab_IntroToFunProg {
 
   object PolymorphicFunctions {
@@ -350,7 +350,16 @@ object ab_IntroToFunProg {
      * Transform a list of Options into Option of List
      */
     def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
-      case h :: tail => map2(h, sequence(tail))( _ :: _)
+      case h :: tail => map2(h, sequence(tail))(_ :: _)
+      case _ => Some(Nil)
+    }
+
+    def sequenceViaForComprehension[A](a: List[Option[A]]): Option[List[A]] = a match {
+      case h :: tail =>
+        for {
+          realHeal: A <- h
+          realTail: List[A] <- sequence(tail)
+        } yield realTail
       case _ => Some(Nil)
     }
 
@@ -386,8 +395,6 @@ object ab_IntroToFunProg {
   }
 
   object forComprehensionUnderTheHood {
-    import scala.util.{Try, Right, Left}
-
     /**
      * -------------------------------------
      *  1 map :
