@@ -200,9 +200,15 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       }
 
       "sequence() transforming List[Option[A]] to Option[List[A]]" in {
+        sequence(List(Some(1), Some(2), Some(3))) mustBe Some(List(1, 2, 3))
+        sequence(List(Some(1), Some(2), None)) mustBe None
+      }
+
+      "sequence() with for-comprehension transforming List[Option[A]] to Option[List[A]]" in {
         sequenceViaForComprehension(List(Some(1), Some(2), Some(3))) mustBe Some(List(1, 2, 3))
         sequenceViaForComprehension(List(Some(1), Some(2), None)) mustBe None
       }
+
     }
     "Either" - {
       "map(), flatMap(), map2() combining 2 monads into one" in {
@@ -221,6 +227,16 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
         r.map2(l)(_ * _) mustBe MyLeft("error")
         r.map2(rr)(_ * _) mustBe MyRight(1230)
+      }
+
+      "sequence() transforming List[Either[ERR,STH]] to Either[ERR, List[STH]]" in {
+        sequence(List(MyRight(1), MyRight(2), MyRight(3))) mustBe MyRight(List(1, 2, 3))
+        sequence(List(MyRight(1), MyRight(2), MyLeft("err"))) mustBe MyLeft("err")
+      }
+
+      "sequence() with for-comprehension transforming List[Either[ERR,STH]] to Either[ERR, List[STH]]" in {
+        sequenceViaForComprehension(List(MyRight(1), MyRight(2), MyRight(3))) mustBe MyRight(List(1, 2, 3))
+        sequenceViaForComprehension(List(MyRight(1), MyRight(2), MyLeft("err"))) mustBe MyLeft("err")
       }
 
     }

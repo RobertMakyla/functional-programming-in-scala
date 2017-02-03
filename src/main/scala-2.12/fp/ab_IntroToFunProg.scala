@@ -359,7 +359,7 @@ object ab_IntroToFunProg {
         for {
           realHeal: A <- h
           realTail: List[A] <- sequence(tail)
-        } yield realTail
+        } yield realHeal :: realTail
       case _ => Some(Nil)
     }
 
@@ -391,6 +391,24 @@ object ab_IntroToFunProg {
     case class MyLeft[+L](value: L) extends MyEither[L, Nothing]
     case class MyRight[+R](value: R) extends MyEither[Nothing, R]
 
+    /**
+     * Implement sequence for Either.
+     * It should return the first error that’s encountered, if there is one.
+     */
+
+    def sequence[E, A](es: List[MyEither[E, A]]): MyEither[E, List[A]] = es match {
+      case h :: tail => h.map2(sequence(tail))(_ :: _)
+      case _ => MyRight(Nil)
+    }
+
+    def sequenceViaForComprehension[E, A](es: List[MyEither[E, A]]): MyEither[E, List[A]] = es match {
+      case h :: tail =>
+        for {
+          realH <- h
+          realTail <- sequence(tail)
+        } yield realH :: realTail
+      case _ => MyRight(Nil)
+    }
 
   }
 
