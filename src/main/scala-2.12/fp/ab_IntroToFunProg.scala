@@ -377,7 +377,7 @@ object ab_IntroToFunProg {
         case MyLeft(v) => MyLeft(v)
       }
 
-      def orElse[LL >: L,RR >: R](b: => MyEither[LL, RR]): MyEither[LL, RR] = this match {
+      def orElse[LL >: L, RR >: R](b: => MyEither[LL, RR]): MyEither[LL, RR] = this match {
         case MyRight(v) => MyRight(v)
         case MyLeft(_) => b
       }
@@ -388,7 +388,9 @@ object ab_IntroToFunProg {
           b <- that
         } yield f(a, b)
     }
+
     case class MyLeft[+L](value: L) extends MyEither[L, Nothing]
+
     case class MyRight[+R](value: R) extends MyEither[Nothing, R]
 
     /**
@@ -478,4 +480,5 @@ object ab_IntroToFunProg {
     }
 
   }
+
 }
