@@ -498,6 +498,7 @@ object ab_IntroToFunProg {
     case class MyCons[+A](h: () => A, t: () => MyStream[A]) extends MyStream[A]
 
     object MyStream {
+
       def cons[A](hd: => A, tl: => MyStream[A]): MyStream[A] = {
         lazy val head = hd
         lazy val tail = tl
@@ -530,6 +531,15 @@ object ab_IntroToFunProg {
       case MyCons(h, t) if n != 0 => h() :: take(t(), n - 1)
       case MyCons(h, t) if n == 0 => Nil
       case MyEmpty => Nil
+    }
+
+    /**
+     * def takeWhile(p: A => Boolean): Stream[A]
+     */
+    def takeWhile[A](s: MyStream[A], p: A => Boolean): MyStream[A] = s match {
+      case MyCons(h, t) if p(h()) => MyCons(() => h(), () => takeWhile(t(), p))
+      case MyCons(h, t) if ! p(h()) => MyEmpty
+      case MyEmpty => MyEmpty
     }
   }
 

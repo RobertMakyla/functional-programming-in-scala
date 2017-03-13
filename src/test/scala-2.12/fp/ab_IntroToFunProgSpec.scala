@@ -267,6 +267,9 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       take(MyStream[Int](1, 2, 3), 2) mustBe List(1, 2)
       take(MyStream[Int](1, 2, 3), 3) mustBe List(1, 2, 3)
     }
+    "takeWhile(p: A => Boolean) from Stream" in {
+      toList(takeWhile[Int](MyStream[Int](1, 2, 3, 4), _ <= 3)) mustBe List(1, 2, 3)
+    }
 
   }
 
