@@ -261,6 +261,13 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       toList(MyStream[Int](1, 2, 3)) mustBe List(1, 2, 3)
       toListTailRec(MyStream[Int](1, 2, 3)) mustBe List(1, 2, 3)
     }
+    "take(n) from Stream" in {
+      take(MyStream[Int](1, 2, 3), 0) mustBe List()
+      take(MyStream[Int](1, 2, 3), 1) mustBe List(1)
+      take(MyStream[Int](1, 2, 3), 2) mustBe List(1, 2)
+      take(MyStream[Int](1, 2, 3), 3) mustBe List(1, 2, 3)
+    }
+
   }
 
 }

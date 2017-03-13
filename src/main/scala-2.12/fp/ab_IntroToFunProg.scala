@@ -523,6 +523,14 @@ object ab_IntroToFunProg {
       case MyEmpty => acc.reverse
     }
 
+    /**
+     * Write a function take(n)
+     */
+    def take[A](s: MyStream[A], n: Int): List[A] = s match {
+      case MyCons(h, t) if n != 0 => h() :: take(t(), n - 1)
+      case MyCons(h, t) if n == 0 => Nil
+      case MyEmpty => Nil
+    }
   }
 
 }
