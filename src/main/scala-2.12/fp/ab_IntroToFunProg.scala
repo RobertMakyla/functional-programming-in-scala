@@ -481,4 +481,48 @@ object ab_IntroToFunProg {
 
   }
 
+  object Streams {
+
+    /**
+     * Call-by-name argument makes functions NON-STRICT.
+     * Call-by-value argument makes functions STRICT.
+     *
+     * call-by-name argument is not evaluated until it's passed to first STRICT function.
+     */
+
+    //STREAMS
+    sealed trait MyStream[+A]
+
+    case object MyEmpty extends MyStream[Nothing]
+
+    case class MyCons[+A](h: () => A, t: () => MyStream[A]) extends MyStream[A]
+
+    object MyStream {
+      def cons[A](hd: => A, tl: => MyStream[A]): MyStream[A] = {
+        lazy val head = hd
+        lazy val tail = tl
+        MyCons(() => head, () => tail)
+      }
+
+      def empty[A]: MyStream[A] = MyEmpty
+
+      def apply[A](as: A*): MyStream[A] = if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
+    }
+
+    /**
+     * Write a function to convert a Stream to a List
+     */
+    def toList[A](s: MyStream[A]): List[A] = s match {
+      case MyCons(h, t) => h() :: toList(t())
+      case MyEmpty => Nil
+    }
+
+    @tailrec
+    def toListTailRec[A](s: MyStream[A], acc: List[A] = Nil): List[A] = s match {
+      case MyCons(h, t) => toListTailRec(t(), h() :: acc)
+      case MyEmpty => acc.reverse
+    }
+
+  }
+
 }

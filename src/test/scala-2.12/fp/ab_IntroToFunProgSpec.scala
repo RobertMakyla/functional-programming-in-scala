@@ -255,4 +255,12 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
   }
 
+  "Streams" - {
+    import Streams._
+    "converting a Stream to a List" in {
+      toList(MyStream[Int](1, 2, 3)) mustBe List(1, 2, 3)
+      toListTailRec(MyStream[Int](1, 2, 3)) mustBe List(1, 2, 3)
+    }
+  }
+
 }
