@@ -1,7 +1,8 @@
 package fp
 
 import scala.annotation.tailrec
-import scala.util.{Try, Right, Left, Either}
+import scala.util.Try
+
 object ab_IntroToFunProg {
 
   object PolymorphicFunctions {
