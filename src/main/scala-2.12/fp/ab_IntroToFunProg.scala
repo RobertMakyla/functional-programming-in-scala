@@ -7,6 +7,9 @@ object ab_IntroToFunProg {
 
   object PolymorphicFunctions {
 
+    /*
+     * Polymorphic functions work with any type of data (generics)
+     */
     def isSorted[A](as: Array[A], f: (A, A) => Boolean) = {
       @tailrec
       def loop(index: Int, acc: Boolean = true): Boolean =
@@ -18,11 +21,20 @@ object ab_IntroToFunProg {
 
   object HigherOrderFunctions {
 
+    /*
+     * Currying - instead of feeding function with all params in a flat way, we can do it partially
+     *            and return other function partially specified
+     */
     def curry[A, B, C](f: (A, B) => C): A => (B => C) =
       (a: A) => b => f(a, b)
 
     def uncurry[A, B, C](f: A => B => C): (A, B) => C =
       (a: A, b: B) => f(a)(b)
+
+    /*
+     * - composing 2 functions into one function
+     * - andThen
+     */
 
     def compose[A, B, C](f: B => C, g: A => B): A => C =
     // (a: A) => f(g(a))
