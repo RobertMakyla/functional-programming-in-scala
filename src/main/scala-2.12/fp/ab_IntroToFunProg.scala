@@ -69,6 +69,7 @@ object ab_IntroToFunProg {
       case (l, i) => drop(tail(l), i - 1)
     }
 
+    /** this function should drop all elements which apply to function f */
     @tailrec
     def dropWhile[A](ls: List[A], f: A => Boolean, acc: List[A] = Nil): List[A] = ls match {
       case Nil => acc.reverse
@@ -88,7 +89,10 @@ object ab_IntroToFunProg {
      *
      * def length[A](as: List[A]): Int
      */
-    def length[A](as: List[A]): Int = as.foldRight(0)((_, acc) => acc + 1)
+    def length[A](as: List[A]): Int =
+      as.foldRight(0)((_, acc) => acc + 1)
+
+    //as.foldLeft(0)((acc, _) => acc + 1)
 
     /**
      * Implement foldLeft that is tail recursive
@@ -118,11 +122,17 @@ object ab_IntroToFunProg {
     def foldRight[A, Z](ls: List[A], z: Z)(f: (A, Z) => Z): Z =
       foldLeft(ls.reverse, z)((a, b) => f(b, a))
 
+    // so to implement foldRight in terms of foldLEft we need to:
+    // - reverse the list
+    // - and change order of arguments in function f
+
     /**
      * append in terms of foldRight
      */
-    def appendViaFoldRight[A](ls: List[A], z: A): List[A] =
-      foldRight(ls, List(z))(_ :: _)
+    def appendViaFoldRight[A](ls: List[A], last: A): List[A] =
+      foldRight(ls, List(last))((a: A, acc: List[A]) => a :: acc)
+
+    //foldRight(ls, List(last))(_ :: _)
 
     /**
      * append in terms of foldLeft
@@ -144,7 +154,13 @@ object ab_IntroToFunProg {
         elem <- singleList
       } yield elem
 
-    def flatten4[A](ls: List[List[A]]): List[A] = ls.flatMap(identity)
+    //List[A] .map(f: A=>B )            : List [B]
+    //List[A] .flatMap(f: A=>List[B] )  : List [B]
+    def flatten4[A](ls: List[List[A]]): List[A] =
+      ls.flatMap((eachSubList: List[A]) => eachSubList)
+
+    //ls.flatMap(_)
+    //ls.flatMap(identity)
 
     /**
      * implement map using fold:
