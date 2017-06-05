@@ -31,6 +31,7 @@ object ab_IntroToFunProg {
      */
     def curry[A, B, C](f: (A, B) => C): A => (B => C) =
       (a: A) => b => f(a, b)
+    //(a: A) => f(a, _)
 
     def uncurry[A, B, C](f: A => B => C): (A, B) => C =
       (a: A, b: B) => f(a)(b)
