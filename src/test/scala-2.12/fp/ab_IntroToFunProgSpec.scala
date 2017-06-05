@@ -8,13 +8,22 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
   "Polymorphic Functions" - {
     import PolymorphicFunctions._
 
-    "isSorted" in {
-      def naturally = (a: Int, b: Int) => a < b
-      isSorted(Array(), naturally) mustBe true
-      isSorted(Array(1), naturally) mustBe true
-      isSorted(Array(1, 2, 3), naturally) mustBe true
-      isSorted(Array(1, 2, 3, 4), naturally) mustBe true
-      isSorted(Array(1, 2, 4, 3), naturally) mustBe false
+    case class TestCase(ls: List[Int], expectedResult: Boolean)
+    def naturally = (a: Int, b: Int) => a < b
+
+    "isSorted, isSortedTailRec" in {
+      List(
+        TestCase(List.empty[Int], true),
+        TestCase(List(1), true),
+        TestCase(List(1, 2, 3), true),
+        TestCase(List(1, 2, 3, 4), true),
+        TestCase(List(1, 2, 4, 3), false),
+        TestCase(List(1, 2, 4, 4), false),
+        TestCase(List(1, 2, 4, 5, 6), true)
+      ).foreach { test =>
+        isSorted(test.ls, naturally) mustBe test.expectedResult
+        isSortedTailRec(test.ls, naturally) mustBe test.expectedResult
+      }
     }
 
   }

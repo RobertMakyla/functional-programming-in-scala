@@ -10,12 +10,16 @@ object ab_IntroToFunProg {
     /*
      * Polymorphic functions work with any type of data (generics)
      */
-    def isSorted[A](as: Array[A], f: (A, A) => Boolean) = {
-      @tailrec
-      def loop(index: Int, acc: Boolean = true): Boolean =
-        if (index + 1 == as.length) acc else loop(index + 1, acc && f(as(index), as(index + 1)))
+    def isSorted[A](ls: List[A], f: (A, A) => Boolean): Boolean = ls match {
+      case Nil => true
+      case singleElem :: Nil => true
+      case h :: second :: tail => f(h, second) && isSortedTailRec(second :: tail, f)
+    }
 
-      if (as.length < 2) true else loop(0)
+    def isSortedTailRec[A](ls: List[A], f: (A, A) => Boolean, acc: Boolean = true): Boolean = ls match {
+      case Nil => acc
+      case singleElem :: Nil => acc
+      case h :: second :: tail => isSortedTailRec(second :: tail, f, acc && f(h, second))
     }
   }
 
