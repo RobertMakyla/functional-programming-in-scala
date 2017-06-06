@@ -382,6 +382,7 @@ object ab_IntroToFunProg {
 
     /**
      * Transform a list of Options into Option of List
+     * using map function from above.
      */
     def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
       case h :: tail => map2(h, sequence(tail))(_ :: _)
@@ -391,41 +392,72 @@ object ab_IntroToFunProg {
     def sequenceViaForComprehension[A](a: List[Option[A]]): Option[List[A]] = a match {
       case h :: tail =>
         for {
-          realHeal: A <- h
+          realHead: A <- h
           realTail: List[A] <- sequence(tail)
-        } yield realHeal :: realTail
+        } yield realHead :: realTail
       case _ => Some(Nil)
     }
 
     /**
      * Implement methods of Either
      */
-    sealed trait MyEither[+L, +R] {
-      def map[RR](f: R => RR): MyEither[L, RR] = this match {
-        case MyRight(v) => MyRight(f(v))
-        case MyLeft(v) => MyLeft(v)
-      }
-
-      def flatMap[LL >: L, B](f: R => MyEither[LL, B]): MyEither[LL, B] = this match {
-        case MyRight(v) => f(v)
-        case MyLeft(v) => MyLeft(v)
-      }
-
-      def orElse[LL >: L, RR >: R](b: => MyEither[LL, RR]): MyEither[LL, RR] = this match {
-        case MyRight(v) => MyRight(v)
-        case MyLeft(_) => b
-      }
-
-      def map2[LL >: L, R2, X](that: MyEither[LL, R2])(f: (R, R2) => X): MyEither[LL, X] =
-        for {
-          a <- this
-          b <- that
-        } yield f(a, b)
-    }
 
     case class MyLeft[+L](value: L) extends MyEither[L, Nothing]
 
     case class MyRight[+R](value: R) extends MyEither[Nothing, R]
+
+    sealed trait MyEither[+L, +R] {
+
+      /*
+        This Either is right-biased, which means that Right is assumed to be the default case to operate on.
+        If it is Left, operations like map, flatMap, ... return the Left value unchanged:
+       */
+
+      /**
+       * Implement map(f: R => NewR) applying f only when it's Right
+       */
+      def map[NewR](f: R => NewR): MyEither[L, NewR] = this match {
+        case MyRight(v) => MyRight(f(v))
+        case MyLeft(v) => MyLeft(v)
+      }
+
+      /**
+       * Implement flatMap[NewR](f: L => Either[L, NewR]): Either[L, NewR]
+       */
+      def flatMap[LL >: L, NewR](f: R => MyEither[LL, NewR]): MyEither[LL, NewR] = this match {
+        case MyRight(v) => f(v)
+        case MyLeft(v) => MyLeft(v)
+      }
+
+      /**
+       * Implement orElse[NewR](f: => Either[L, NewR]): Either[L, NewR]
+       * applying f only if it's Left
+       */
+      def orElse[LL >: L, NewR >: R](f: => MyEither[LL, NewR]): MyEither[LL, NewR] = this match {
+        case MyRight(v) => MyRight(v)
+        case MyLeft(_) => f
+      }
+
+      /**
+       * Assuming the Either is (is not) right-biased, use it in for-comprehension
+       */
+      def map2[LL >: L, OtherR, X](that: MyEither[LL, OtherR])(f: (R, OtherR) => X): MyEither[LL, X] = {
+
+        // when Either is not right-biased we have to make projections to use it in for-comprehension:
+        //
+        // for {
+        //    foo <- Right[String,Int](1).right
+        //    bar <- Left[String,Int]("nope").right
+        // } yield (foo + bar)     // => Left("nope")
+
+        // since we made this Either right-biased, we can simply use it in for-comprehension
+        for {
+          a <- this // Either[L, R]
+          b <- that // Either[L, OtherR]
+        } yield f(a, b) // if both either were right I can use all the rights. Otherwise I'll get first left
+      }
+
+    }
 
     /**
      * Implement sequence for Either.
