@@ -481,7 +481,10 @@ object ab_IntroToFunProg {
   }
 
   object forComprehensionUnderTheHood {
-    /**
+
+    /** try to de-sugar for-comprehension with 1 line */
+
+    /*
      * -------------------------------------
      *  1 map :
      * -------------------------------------
@@ -492,20 +495,25 @@ object ab_IntroToFunProg {
      *                           // result:           Monad[B]
      *
      * eg: Some(123).map( i => "" + i )
-     *
+     */
+
+    /** try to de-sugar for-comprehension with 2 lines */
+
+    /*
      * -------------------------------------
      *  1 flatMap + 1 map :
      * -------------------------------------
      *
      * for{
-     *    a <- monadOfA           // first expression: Monad[A]
-     *    b <- fromAtoMonadOfB    // flatMap function: A => Monad[B]
-     * } yield b2c(b)             // map:              B => C
-     *                            // result:           Monad[C]
+     *    someInt     <- Some(1)             // first expression: Monad[Int]
+     *    someDouble  <- Some(2.0 * someInt) // flatMap function: Int => Monad[Double]
+     * } yield s" I got $doubled"            // map:              Double => String
+     *                                       // result:           Monad[String]
      *
-     * eg: Some(2).flatMap( i => Try{ "Hello"(i) }.toOption ) map ( c => c.toUpper)
+     * eg: Some(1).flatMap( i => Some(2.0 * i) ) map ( "I got " + _ )
      *
      */
+
     def isForComprehensionOptionWorking = {
       def maybeIndex: Option[Int] = Some(0)
       def maybeCharFrom(index: Int, s: String): Option[Char] =
