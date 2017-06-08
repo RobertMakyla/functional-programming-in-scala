@@ -633,6 +633,22 @@ object ab_IntroToFunProg {
      */
     def ones: MyStream[Int] = MyCons(() => 1, () => ones)
 
+    /**
+     * Infinite Streams of any constant value of any type
+     */
+    def infiniteStreamOf[A](a: A): MyStream[A] = MyCons(() => a, () => infiniteStreamOf(a))
+
+    /**
+     * Infinite Streams of natural integers
+     */
+    def from(n: Int): MyStream[Int] = MyCons(() => n, () => from(n + 1))
+
+    /**
+     * Infinite Streams of fibonacci numbers
+     */
+    def fibs(lastMinusTwo: Int = 0, lastMinusOne: Int = 1, last: Int = 1): MyStream[Int] =
+      MyCons(() => lastMinusTwo, () => fibs(lastMinusOne, last, last + lastMinusOne))
+
   }
 
 }

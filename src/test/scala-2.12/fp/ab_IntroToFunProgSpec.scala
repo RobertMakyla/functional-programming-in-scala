@@ -290,6 +290,13 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     }
     "Infinite Stream of ones (1, 1, 1, 1 ... )" in {
       take(ones, 5) mustBe List(1, 1, 1, 1, 1)
+      exists[Int](ones, _ == 1) mustBe true
+
+      take(infiniteStreamOf[Boolean](true), 5) mustBe List(true, true, true, true, true)
+      take(from(0), 5) mustBe List(0, 1, 2, 3, 4)
+    }
+    "Infinitif Fibonacci numbers" in {
+      take(fibs(), 7) mustBe List(0, 1, 1, 2, 3, 5, 8)
     }
   }
 
