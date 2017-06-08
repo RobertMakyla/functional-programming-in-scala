@@ -624,6 +624,14 @@ object ab_IntroToFunProg {
       case MyEmpty => false
     }
 
+    /**
+     * def forAll(p: A => Boolean): Boolean
+     */
+    def forAll[A](s: MyStream[A], p: A => Boolean): Boolean = s match {
+      case MyCons(h, tail) => if (!p(h())) false else forAll(tail(), p)
+      case MyEmpty => true
+    }
+
   }
 
 }

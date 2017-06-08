@@ -283,6 +283,11 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     "exists(p: A => Boolean) from Stream" in {
       exists[Int](MyStream[Int](0, 2, 4, 6), _ % 2 != 0) mustBe false
     }
+    "forAll(p: A => Boolean) from Stream" in {
+      forAll[Int](MyStream[Int](), _ > 10) mustBe true
+      forAll[Int](MyStream[Int](11, 12), _ > 10) mustBe true
+      forAll[Int](MyStream[Int](11, 0, 12), _ > 10) mustBe false
+    }
 
   }
 
