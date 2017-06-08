@@ -573,11 +573,7 @@ object ab_IntroToFunProg {
 
     object MyStream {
 
-      def cons[A](hd: => A, tl: => MyStream[A]): MyStream[A] = {
-        lazy val head = hd
-        lazy val tail = tl
-        MyCons(() => head, () => tail)
-      }
+      def cons[A](h: => A, t: => MyStream[A]): MyStream[A] = MyCons(() => h, () => t)
 
       def empty[A]: MyStream[A] = MyEmpty
 
