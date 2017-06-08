@@ -288,7 +288,9 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       forAll[Int](MyStream[Int](11, 12), _ > 10) mustBe true
       forAll[Int](MyStream[Int](11, 0, 12), _ > 10) mustBe false
     }
-
+    "Infinite Stream of ones (1, 1, 1, 1 ... )" in {
+      take(ones, 5) mustBe List(1, 1, 1, 1, 1)
+    }
   }
 
 }

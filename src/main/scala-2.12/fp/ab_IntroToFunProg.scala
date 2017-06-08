@@ -628,6 +628,11 @@ object ab_IntroToFunProg {
       case MyEmpty => true
     }
 
+    /**
+     * Infinite Streams ( ones: 1, 1, 1, 1, 1, 1, 1 ... )
+     */
+    def ones: MyStream[Int] = MyCons(() => 1, () => ones)
+
   }
 
 }
