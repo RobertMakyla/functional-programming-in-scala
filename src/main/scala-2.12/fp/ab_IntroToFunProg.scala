@@ -615,6 +615,15 @@ object ab_IntroToFunProg {
       case MyCons(h, t) if ! p(h()) => MyEmpty
       case MyEmpty => MyEmpty
     }
+
+    /**
+     * exists[A](p: A => Boolean): Boolean
+     */
+    def exists[A](s: MyStream[A], p: A => Boolean): Boolean = s match {
+      case MyCons(h, t) => p(h()) || exists(t(), p)
+      case MyEmpty => false
+    }
+
   }
 
 }
