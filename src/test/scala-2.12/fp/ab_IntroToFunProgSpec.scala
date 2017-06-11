@@ -300,4 +300,14 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
     }
   }
 
+  "Purely Functional State" - {
+    import PurelyFunctionalState._
+
+    "generate randonly list of integers" in {
+      val rng = SimpleRNG(123)
+
+      ints(10)(rng) mustBe ints(10)(rng)
+    }
+  }
+
 }

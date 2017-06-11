@@ -651,4 +651,47 @@ object ab_IntroToFunProg {
 
   }
 
+  object PurelyFunctionalState {
+
+    /**
+     * scala.util.Random - this one has sime state which changes because we cannot predict next output.
+     * So it's methods are not referentially transparent - hard to test, predict what will happen.
+     */
+
+    /**
+     * Purely functional Random Number Generator (RNG)
+     *
+     * To make it functional, method should return not only random result but also mutated generator.
+     * This way it's predictable, testable.
+     */
+
+    trait RNG {
+      def nextInt: (Int, RNG)
+    }
+
+    case class SimpleRNG(seed: Long) extends RNG {
+      override def nextInt: (Int, RNG) = {
+        val newSeed = (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
+        val nextRNG = SimpleRNG(newSeed)
+        val n = (newSeed >>> 16).toInt //random number is generated based on seed only.
+        // so MySimpleRNG.nextInt will give the same result all the time - cause the seed is the same.
+
+        // >>> przesunięcie newSeed w prawo o 16 miejsc (z lewej dodając zera)
+
+        (n, nextRNG)
+      }
+    }
+
+    /**
+     * Write a function to generate a list of random integers.
+     */
+    def ints(count: Int)(rng: RNG): (List[Int], RNG) = if (count == 0) (Nil, rng)
+    else {
+      val (i, rng1) = rng.nextInt
+      val (is, rng2) = ints(count - 1)(rng1)
+      (i :: is, rng2)
+    }
+
+  }
+
 }
