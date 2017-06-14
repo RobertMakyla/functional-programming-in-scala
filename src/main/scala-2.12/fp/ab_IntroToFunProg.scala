@@ -666,11 +666,11 @@ object ab_IntroToFunProg {
      */
 
     trait RNG {
-      def nextInt: (Int, RNG)
+      def int: (Int, RNG)
     }
 
     case class SimpleRNG(seed: Long) extends RNG {
-      override def nextInt: (Int, RNG) = {
+      override def int: (Int, RNG) = {
         val newSeed = (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
         val nextRNG = SimpleRNG(newSeed)
         val n = (newSeed >>> 16).toInt //random number is generated based on seed only.
@@ -687,11 +687,51 @@ object ab_IntroToFunProg {
      */
     def ints(count: Int)(rng: RNG): (List[Int], RNG) = if (count == 0) (Nil, rng)
     else {
-      val (i, rng1) = rng.nextInt
+      val (i, rng1) = rng.int
       val (is, rng2) = ints(count - 1)(rng1)
       (i :: is, rng2)
     }
 
+    /**
+     * Think of a new type that would cover passing mutated RNG all the time... :
+     */
+    type Rand[+A] = RNG => (A, RNG) // to not pass mutated RNG explicitly all the time..
+
+    /**
+     * Implement def unit[A](a: A): Rand[A]
+     */
+    def unit[A](a: A): Rand[A] = (a, _)
+
+    /**
+     * Implement def map[A, B](r: Rand[A])(f: A => B): Rand[B]
+     */
+    def map[A, B](r: Rand[A])(f: A => B): Rand[B] = (rng: RNG) => {
+      val (a: A, rng2: RNG) = r(rng)
+      (f(a), rng2)
+    }
+
+    /**
+     * Implement def flatMap[A,B](r: Rand[A])(g: A => Rand[B]): Rand[B]
+     */
+    def flatMap[A, B](r: Rand[A])(g: A => Rand[B]): Rand[B] = (rng: RNG) => {
+      val (a: A, rng2: RNG) = r(rng)
+      val randB: Rand[B] = g(a)
+      val (b: B, rng3: RNG) = randB(rng2)
+      (b, rng3)
+    }
+
+    /**
+     * What we have just written (unit, map, flatMap) are functions for working with state actions.
+     *
+     * Now we can start playing with it as if Rand was a monad:
+     *
+     * val randoms = Rand[(Int, Int, Int)] = for {   //in other words: RNG => ((Int, Int, Int), RNG)
+     *   a <- int // RNG => (A, RNG)
+     *   b <- int
+     *   c <- int
+     * } yield (a, b, c)
+     *
+     */
   }
 
 }
