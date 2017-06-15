@@ -3,6 +3,9 @@ package fp
 import fp.ab_IntroToFunProg._
 import org.scalatest.{FreeSpec, MustMatchers}
 
+import scala.concurrent.Await
+import scala.concurrent.duration.FiniteDuration
+
 class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
   "Polymorphic Functions" - {
@@ -308,6 +311,27 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
       ints(10)(rng) mustBe ints(10)(rng)
     }
+  }
+
+  "Futures" - {
+    import scala.concurrent.duration._
+    import Futures._
+
+    val oneSec = 1.seconds
+
+    "global ExecutionContext - THREAD POOL of 4 threads" in {
+      val numberOfProcessors = Runtime.getRuntime().availableProcessors()
+      numberOfProcessors mustBe 4
+    }
+
+    "asynchronous future" in {
+      Await.result(asyncFuture, oneSec) mustBe UpperCaseName("ASYNC_FUTURE")
+    }
+
+    "synchronous future - one after another" in {
+      Await.result(syncFuture, oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
+    }
+
   }
 
 }

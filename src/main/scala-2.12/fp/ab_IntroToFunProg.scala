@@ -1,7 +1,8 @@
 package fp
 
 import scala.annotation.tailrec
-import scala.util.Try
+import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success, Try}
 
 object ab_IntroToFunProg {
 
@@ -725,7 +726,7 @@ object ab_IntroToFunProg {
      *
      * Now we can start playing with it as if Rand was a monad:
      *
-     * val randoms = Rand[(Int, Int, Int)] = for {   //in other words: RNG => ((Int, Int, Int), RNG)
+     * val randoms: Rand[(Int, Int, Int)] = for {   //in other words: RNG => ((Int, Int, Int), RNG)
      *   a <- int // RNG => (A, RNG)
      *   b <- int
      *   c <- int
@@ -734,4 +735,84 @@ object ab_IntroToFunProg {
      */
   }
 
+  object Futures { // source: http://docs.scala-lang.org/overviews/core/futures.html
+
+    def takeYourTime(calculationLabel: String) = for (i <- 1 to 3) {
+      print(s"$calculationLabel : $i\n"); Thread.sleep(100)
+    }
+
+    case class Name(value: String)
+    case class UpperCaseName(value: String)
+    case class UpperCaseNameWithSpaces(value: String)
+
+    // long lasting operation
+    def makeUpperCase(name: Name): UpperCaseName = {
+      takeYourTime(s"Making upper case of $name")
+      UpperCaseName(name.value.toUpperCase)
+    }
+
+    // long lasting operation
+    def addSpaces(upperCaseName: UpperCaseName): UpperCaseNameWithSpaces = {
+      takeYourTime(s"Adding spaces to $upperCaseName")
+      UpperCaseNameWithSpaces(upperCaseName.value.mkString(" "))
+    }
+
+    /**
+     * Execution Context
+     *
+     * It is possible to execute Future's computations in new Thread, Thread pool,
+     * or current thread (discouraged cause it's supposed to be in parallel)
+     *
+     * Futures and Promises always do computations in Execution Context
+     *
+     * scala.concurrent.ExecutionContext.global - that's global static THREAD POOL
+     *
+     * the number of threads is number of processors (4):
+     *    Runtime.getRuntime().availableProcessors()
+     */
+
+    val ec: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
+
+    def asyncFuture: Future[UpperCaseName] = Future {
+      makeUpperCase(Name("async_future"))
+    }(ec) //not needed when ec is implicit
+
+    //makeUpperCase - might be already calculating - we can't be sure
+
+    /**
+     * This will calculate parallely in separate thread from global thread pool
+     * But we don't know when !!!
+     *
+     * We can stop and wait for the result: Await.result(firstFuture, 10 seconds)
+     */
+
+
+    /**
+     * Synchronous Execution
+     *
+     * First it completes makeUpperCase: Name => UpperName
+     * Then, it starts addSpaces: UpperName => UpperNameWithSpaces
+     *
+     * If we gave different execution context to map, then thread pool would be different
+     * and so synchronous execution would not be guaranteed !!!!
+     */
+
+    def syncFuture: Future[UpperCaseNameWithSpaces] = Future {
+      makeUpperCase(Name("sync_future"))
+    }(ec).map {
+      upper => addSpaces(upper)
+    }(ec)
+
+    /**
+     * Callback
+     */
+//    syncFuture.onComplete {
+//      case Success(result) => println(s"future finished with $result")
+//      case Failure(t) => t.printStackTrace(System.out)
+//    }(ec)
+
+
+//    Thread.sleep(10000) // just to give Futures chance to execute
+//    // - without waiting for it
+  }
 }
