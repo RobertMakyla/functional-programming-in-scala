@@ -319,28 +319,32 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
     val oneSec = 1.seconds
 
+    val ec = scala.concurrent.ExecutionContext.global
+
     "global ExecutionContext - THREAD POOL of 4 threads" in {
       val numberOfProcessors = Runtime.getRuntime().availableProcessors()
       numberOfProcessors mustBe 4
     }
 
     "asynchronous future" in {
-      Await.result(asyncFuture, oneSec) mustBe UpperCaseName("ASYNC_FUTURE")
+      Await.result(newAsyncFuture(ec), oneSec) mustBe UpperCaseName("ASYNC_FUTURE")
     }
 
     "synchronous future - one after another" in {
-      Await.result(syncFuture, oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
+      Await.result(newSyncFuture(ec), oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
     }
 
     "failing future encapsulates errors/exceptions in separate thread, " in {
-       Await.ready(failingFuture, oneSec)
+       Await.ready(failingFuture(ec), oneSec)
     }
 
     "callbacks - eventually all are executed, order not define, regardless errors in other callbacks" in {
-      import scala.concurrent.ExecutionContext.Implicits.global
-      val aFuture = asyncFuture
-      aFuture onSuccess { case _ => throw new RuntimeException("boom 1") }
-      aFuture onFailure { case _ => throw new RuntimeException("boom 2") }
+      val ec = scala.concurrent.ExecutionContext.global
+      implicit val executionContext = ec
+
+      val aFuture: Future[UpperCaseName] = newAsyncFuture(ec)
+      aFuture onSuccess { case _ => throw new RuntimeException("handling success crashed") }
+      aFuture onFailure { case _ => throw new RuntimeException("handling failure crashed") }
       aFuture onSuccess { case _ => println(" I can register many callbacks on 1 future") }
       aFuture onSuccess { case _ => println(" callbacks are executed regardless errors in other callbacks") }
       aFuture onSuccess { case _ => println(" as long as Future is Success/Failure and matches type in PartialFunction, eg Exception type in onFailure()") }

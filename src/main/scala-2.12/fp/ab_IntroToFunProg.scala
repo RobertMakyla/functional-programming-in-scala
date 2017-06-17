@@ -1,7 +1,7 @@
 package fp
 
 import scala.annotation.tailrec
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
 
 object ab_IntroToFunProg {
@@ -771,9 +771,9 @@ object ab_IntroToFunProg {
      *    Runtime.getRuntime().availableProcessors()
      */
 
-    val ec: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
+    val globalEC: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
 
-    def asyncFuture: Future[UpperCaseName] = Future {
+    def newAsyncFuture(ec: ExecutionContext) = Future {
       makeUpperCase(Name("async_future"))
     }(ec) //not needed when ec is implicit
 
@@ -800,7 +800,7 @@ object ab_IntroToFunProg {
      * and so synchronous execution would not be guaranteed !!!!
      */
 
-    def syncFuture: Future[UpperCaseNameWithSpaces] = Future {
+    def newSyncFuture(ec: ExecutionContext): Future[UpperCaseNameWithSpaces] = Future {
       makeUpperCase(Name("sync_future"))
     }(ec).map {
       upper => addSpaces(upper)
@@ -811,7 +811,7 @@ object ab_IntroToFunProg {
      *
      * As it's executed in different thread) encapsulates exceptions just like Try( )
      */
-    def failingFuture: Future[String] = Future(throw new RuntimeException("boom"))(ec)
+    def failingFuture(ec: ExecutionContext): Future[String] = Future(throw new RuntimeException("boom"))(ec)
 
     /**
      * Callback
@@ -867,26 +867,22 @@ object ab_IntroToFunProg {
      * eg: onFailure{ t:SomeException => /* executed only at SomeException*/ }
      */
 
-    asyncFuture.onComplete {
+    val aFuture: Future[UpperCaseName] = newAsyncFuture(globalEC)
+
+    aFuture.onComplete {
       case Success(result: UpperCaseName) => println(s"future finished with $result")
       case Failure(t) => println(s"Error: ${t.getMessage}")
-    }(ec)
+    }(globalEC)
 
-    asyncFuture.onSuccess{ //deprecated
-      case result: UpperCaseName => 2 / 0)
-    }(ec)
+    aFuture.onSuccess {
+      case result: UpperCaseName =>
+        println(s"log 2: future finished with $result")
+        throw new RuntimeException("handling success has crashed, but it doesn't affect other callbacks")
+    }(globalEC)
 
-    asyncFuture.onSuccess{ //deprecated
-      case result: UpperCaseName => println(s"log 1: future finished with $result")
-    }(ec)
-
-    asyncFuture.onSuccess{ //deprecated
-      case result: UpperCaseName => println(s"log 2: future finished with $result")
-    }(ec)
-
-    asyncFuture.onFailure{ //deprecated
+    aFuture.onFailure {
       case t: Throwable => println(s"Error: ${t.getMessage}")
-    }(ec)
+    }(globalEC)
 
 
   }
