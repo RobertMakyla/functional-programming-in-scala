@@ -813,20 +813,82 @@ object ab_IntroToFunProg {
      */
     def failingFuture: Future[String] = Future(throw new RuntimeException("boom"))(ec)
 
-//    /**
-//     * Callback
-//     *
-//     * We have them to process result of the future after it's completed.
-//     * Thanks to callbacks method we don't need to wait for a future to complete.
-//     */
+    /**
+     * Callback
+     *
+     * We have them to process result of the future after it's completed.
+     * We don't need to wait for a future to complete with blocking Await.result() / Await.ready().
+     *
+     * Callback methods are called asynchronously once the future is complete.
+     **
+     * onComplete[U](f: Try[T] => U): Unit
+     * onSuccess[U](f: PartialFunction[T, U] ): Unit       - Deprecated, use only when we want action after success
+     * onFailure[U](f: PartialFunction[Throwable, U]): Unit - Deprecated, use only when we want action after failure
+     */
 
-//    syncFuture.onComplete {
-//      case Success(result) => println(s"future finished with $result")
-//      case Failure(t) => t.printStackTrace(System.out)
-//    }(ec)
+    /**
+     * Callback - execution timing
+     *
+     * Since callback methods need future result, they are executed after future is completed.
+     * However not necessarily by the same thread.
+     *
+     * E.g.: future is completed, then there's no free thread in pool,
+     * then EVENTUALLY callback is executed in different free thread.
+     */
+
+    /**
+     * Callback - execution order
+     *
+     * They always return: Unit (invocations cannot be chained one after another)
+     *
+     * We can register many different (or the same) callbacks on a single future.
+     * But the order of execution CANNOT be defined:
+     *  - it can be executed one after another
+     *  - or parallely in different threads from the pool
+     *
+     * That's why they should never modify anything - there should be no side effects.
+     *
+     * muFuture onComplete  (...)
+     * muFuture onSuccess   ( /* do sth 1*/)
+     * muFuture onSuccess   ( /* do sth 2*/)
+     * muFuture onComplete  ( /* do yet another thing*/)
+     * muFuture onFailure   ( /* log the error */)
+     */
+
+    /**
+     * Callback - execution conditions
+     *
+     * Even if some callbacks throw Exception, other are still eventually executed regardless !!!
+     * cause it's all in different threads, and always return Unit anyway...
+     *
+     * Callbacks are executed as long as future is Success/Failure, and type in PartialFunctions matches.
+     *
+     * eg: onFailure{ t:Throwable     => /* executed at any failure*/ }
+     * eg: onFailure{ t:SomeException => /* executed only at SomeException*/ }
+     */
+
+    asyncFuture.onComplete {
+      case Success(result: UpperCaseName) => println(s"future finished with $result")
+      case Failure(t) => println(s"Error: ${t.getMessage}")
+    }(ec)
+
+    asyncFuture.onSuccess{ //deprecated
+      case result: UpperCaseName => 2 / 0)
+    }(ec)
+
+    asyncFuture.onSuccess{ //deprecated
+      case result: UpperCaseName => println(s"log 1: future finished with $result")
+    }(ec)
+
+    asyncFuture.onSuccess{ //deprecated
+      case result: UpperCaseName => println(s"log 2: future finished with $result")
+    }(ec)
+
+    asyncFuture.onFailure{ //deprecated
+      case t: Throwable => println(s"Error: ${t.getMessage}")
+    }(ec)
 
 
-//    Thread.sleep(10000) // just to give Futures chance to execute
-//    // - without waiting for it
   }
+
 }

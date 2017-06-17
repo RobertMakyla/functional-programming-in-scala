@@ -336,6 +336,16 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
        Await.ready(failingFuture, oneSec)
     }
 
+    "callbacks - eventually all are executed, order not define, regardless errors in other callbacks" in {
+      import scala.concurrent.ExecutionContext.Implicits.global
+      val aFuture = asyncFuture
+      aFuture onSuccess { case _ => throw new RuntimeException("boom 1") }
+      aFuture onFailure { case _ => throw new RuntimeException("boom 2") }
+      aFuture onSuccess { case _ => println(" I can register many callbacks on 1 future") }
+      aFuture onSuccess { case _ => println(" callbacks are executed regardless errors in other callbacks") }
+      aFuture onSuccess { case _ => println(" as long as Future is Success/Failure and matches type in PartialFunction, eg Exception type in onFailure()") }
+    }
+
   }
 
 }
