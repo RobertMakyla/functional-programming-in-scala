@@ -789,23 +789,6 @@ object ab_IntroToFunProg {
      * We can stop and wait for the result:       Await.result[T](firstFuture, 10 seconds): T
      */
 
-
-    /**
-     * Synchronous Execution
-     *
-     * First it completes makeUpperCase: Name => UpperName
-     * Then, it starts addSpaces: UpperName => UpperNameWithSpaces
-     *
-     * If we gave different execution context to map, then thread pool would be different
-     * and so synchronous execution would not be guaranteed !!!!
-     */
-
-    def newSyncFuture(ec: ExecutionContext): Future[UpperCaseNameWithSpaces] = Future {
-      makeUpperCase(Name("sync_future"))
-    }(ec).map {
-      upper => addSpaces(upper)
-    }(ec)
-
     /**
      * failing Future
      *
@@ -888,7 +871,50 @@ object ab_IntroToFunProg {
       case t: Throwable => println(s"Error: ${t.getMessage}")
     }(globalEC)
 
+    /**
+     * Composing Futures - to be executed synchronously (map/flatMap)
+     *
+     * First it completes makeUpperCase: Name => UpperName
+     * Then, it starts addSpaces: UpperName => UpperNameWithSpaces
+     *
+     * If we gave different execution context to map, then thread pool would be different
+     * and so synchronous execution would not be guaranteed !!!!
+     */
 
+    def newSyncFuture(ec: ExecutionContext): Future[UpperCaseNameWithSpaces] = Future {
+      makeUpperCase(Name("sync_future"))
+    }(ec).map {
+      upper => addSpaces(upper)
+    }(ec)
+
+    /**
+     * For-Comprehension (another way of executing synchronously)
+     *
+     * If any of futures throws an exception, then it stops mapping/flatMapping and returns Failure with first exception ..
+     */
+    def futureForComprehension(ec: ExecutionContext): Future[String] = {
+      implicit val innerEC = ec
+      for {
+        a <- Future("Robert ")
+        b <- Future(a * 3)
+        c <- Future(b.toUpperCase)
+      } yield c
+    }
+
+    /**
+     * foreach() - it's the same as onSuccess()  so just registering asynchronous action in case of success
+     *
+     * Functions that map/flatMap in case of success (if failure then result is the same):
+     *
+     *   map[U](     pf: PartialFunction[T, U]         ): Future[U]
+     *   flatMap[U]( pf: PartialFunction[T, Future[U] ]): Future[U]
+     *
+     * Functions that map/flatMap in case of failure (if success then result is the same):
+     *
+     *   recover[U](     pf: PartialFunction[Throwable, U]         ): Future[U]
+     *   recoverWith[U]( pf: PartialFunction[Throwable, Future[U] ]): Future[U]
+     *
+     */
   }
 
 }

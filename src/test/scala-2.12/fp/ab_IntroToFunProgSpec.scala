@@ -330,10 +330,6 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       Await.result(newAsyncFuture(ec), oneSec) mustBe UpperCaseName("ASYNC_FUTURE")
     }
 
-    "synchronous future - one after another" in {
-      Await.result(newSyncFuture(ec), oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
-    }
-
     "failing future encapsulates errors/exceptions in separate thread, so no exception here " in {
       val ec = scala.concurrent.ExecutionContext.global
 
@@ -352,6 +348,10 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       aFuture onSuccess { case _ => print(" callbacks are executed regardless errors in other callbacks") }
       aFuture onSuccess { case _ => print(" as long as Future completes as Success/Failure and matches type in PartialFunction, eg Exception type in onFailure()") }
       aFuture onSuccess { case _ => print(" and as long as callback gets Thread from pool to be executed") }
+    }
+
+    "synchronous future - one after another" in {
+      Await.result(newSyncFuture(ec), oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
     }
 
   }
