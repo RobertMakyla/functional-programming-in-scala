@@ -870,7 +870,7 @@ object ab_IntroToFunProg {
     val aFuture: Future[UpperCaseName] = newAsyncFuture(globalEC)
 
     aFuture.onComplete {
-      case Success(result: UpperCaseName) => println(s"future finished with $result")
+      case Success(result: UpperCaseName) => println(s"log 1: future finished with $result")
       case Failure(t) => println(s"Error: ${t.getMessage}")
     }(globalEC)
 
