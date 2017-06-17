@@ -811,7 +811,7 @@ object ab_IntroToFunProg {
      *
      * As it's executed in different thread) encapsulates exceptions just like Try( )
      */
-    def failingFuture(ec: ExecutionContext): Future[String] = Future(throw new RuntimeException("boom"))(ec)
+    def newFailingFuture(ec: ExecutionContext): Future[String] = Future(throw new RuntimeException("boom"))(ec)
 
     /**
      * Callback

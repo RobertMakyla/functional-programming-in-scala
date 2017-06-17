@@ -334,8 +334,12 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       Await.result(newSyncFuture(ec), oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
     }
 
-    "failing future encapsulates errors/exceptions in separate thread, " in {
-       Await.ready(failingFuture(ec), oneSec)
+    "failing future encapsulates errors/exceptions in separate thread, so no exception here " in {
+      val ec = scala.concurrent.ExecutionContext.global
+
+      val aFailingFuture: Future[String] = newFailingFuture(ec)
+      aFailingFuture.onFailure{ case _ => throw new RuntimeException("some handling failure crashed ")}(ec)
+      Await.ready(aFailingFuture, oneSec)
     }
 
     "callbacks - eventually all are executed, order not define, regardless errors in other callbacks" in {
