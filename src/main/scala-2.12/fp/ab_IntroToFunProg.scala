@@ -865,6 +865,10 @@ object ab_IntroToFunProg {
      *
      * eg: onFailure{ t:Throwable     => /* executed at any failure*/ }
      * eg: onFailure{ t:SomeException => /* executed only at SomeException*/ }
+     *
+     * If some callbacks never complete (e.g. the callback contains an infinite loop),
+     * the other callbacks may not get thread to be executed at all.
+     * In these cases, a potentially blocking callback must use the blocking{}.
      */
 
     val aFuture: Future[UpperCaseName] = newAsyncFuture(globalEC)

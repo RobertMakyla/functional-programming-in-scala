@@ -346,7 +346,8 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       aFuture onFailure { case _ => throw new RuntimeException("some handling failure crashed") }
       aFuture onSuccess { case _ => print(" I can register many callbacks on 1 future") }
       aFuture onSuccess { case _ => print(" callbacks are executed regardless errors in other callbacks") }
-      aFuture onSuccess { case _ => print(" as long as Future is Success/Failure and matches type in PartialFunction, eg Exception type in onFailure()") }
+      aFuture onSuccess { case _ => print(" as long as Future completes as Success/Failure and matches type in PartialFunction, eg Exception type in onFailure()") }
+      aFuture onSuccess { case _ => print(" and as long as callback gets Thread from pool to be executed") }
     }
 
   }
