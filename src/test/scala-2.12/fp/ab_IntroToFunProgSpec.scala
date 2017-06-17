@@ -3,7 +3,7 @@ package fp
 import fp.ab_IntroToFunProg._
 import org.scalatest.{FreeSpec, MustMatchers}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
 class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
@@ -330,6 +330,10 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
     "synchronous future - one after another" in {
       Await.result(syncFuture, oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
+    }
+
+    "failing future encapsulates errors/exceptions in separate thread, " in {
+       Await.ready(failingFuture, oneSec)
     }
 
   }

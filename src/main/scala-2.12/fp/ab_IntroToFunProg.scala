@@ -780,10 +780,13 @@ object ab_IntroToFunProg {
     //makeUpperCase - might be already calculating - we can't be sure
 
     /**
+     * Future(...) calls Future.apply() which creates and schedules asynchronous computation in thread pool.
+     *
      * This will calculate parallely in separate thread from global thread pool
      * But we don't know when !!!
      *
-     * We can stop and wait for the result: Await.result(firstFuture, 10 seconds)
+     * We can stop and wait until it's completed: Await.ready(firstFuture, 10 seconds)
+     * We can stop and wait for the result:       Await.result[T](firstFuture, 10 seconds): T
      */
 
 
@@ -804,8 +807,19 @@ object ab_IntroToFunProg {
     }(ec)
 
     /**
-     * Callback
+     * failing Future
+     *
+     * As it's executed in different thread) encapsulates exceptions just like Try( )
      */
+    def failingFuture: Future[String] = Future(throw new RuntimeException("boom"))(ec)
+
+//    /**
+//     * Callback
+//     *
+//     * We have them to process result of the future after it's completed.
+//     * Thanks to callbacks method we don't need to wait for a future to complete.
+//     */
+
 //    syncFuture.onComplete {
 //      case Success(result) => println(s"future finished with $result")
 //      case Failure(t) => t.printStackTrace(System.out)
