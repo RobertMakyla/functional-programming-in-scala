@@ -916,14 +916,35 @@ object ab_IntroToFunProg {
      */
 
     /**
-     * Function that gives another shoot for another futer to be successful is :fallbackTo():
+     * Function that gives another shoot for another future to be successful is:
      *
      *     Future[U].fallbackTo(second: Future[U]): Future[U]
      *
-     * If first future fails and the second one is successfull, then second one will be returned.
+     * If first future fails and the second one is successful, then second one will be returned.
      * If both fail, the failure of the first one will be returned.
      */
 
+    /**
+     * Function called after future's completed (successfully or not),
+     * and still returns this future (so can be chained):
+     *
+     *     Future[U].andThen(pf: PartialFunction[Try[U], Any]): Future[U]
+     *
+     * eg:  Future{ /* ... */}
+     *       .andThen{ case Success(sth) => log.info(sth)}
+     *       .andThen{ case Failure(t) => log.error(t)}
+     *
+     *  But we don't really need this chaining it cause we can register many callback methods on future
+     *  (onComplete: Unit , onSuccess: Unit , onFailure: Unit )
+     */
+
+    /**
+     * Projection Future[U].failed  - inverting result if we care about future failure
+     *
+     * If future fails, then failed() returns Success(Throwable)
+     * If future succeeds, then failed returns Failure()
+     *
+     */
   }
 
 }

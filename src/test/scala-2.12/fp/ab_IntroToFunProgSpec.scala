@@ -5,6 +5,7 @@ import org.scalatest.{FreeSpec, MustMatchers}
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
+import scala.util.{Failure, Success}
 
 class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
@@ -352,6 +353,24 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
     "synchronous future - one after another" in {
       Await.result(newSyncFuture(ec), oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
+    }
+
+    "future projection" in {
+      import scala.concurrent.ExecutionContext.Implicits.global
+      val ec = scala.concurrent.ExecutionContext.global
+
+      newFailingFuture(ec).failed //it's OK that it's newFailingFuture, cause we expect it to fail
+        .onComplete {
+        case Success(t: Throwable) => // ok
+        case _ => fail()
+      }
+
+      newAsyncFuture(ec).failed // it's successful future, but we expect it to fail..
+        .onComplete {
+          case Failure(t: NoSuchElementException) => //ok
+          case _ => fail()
+        }
+
     }
 
   }
