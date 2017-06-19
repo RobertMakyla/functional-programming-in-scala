@@ -851,7 +851,14 @@ object ab_IntroToFunProg {
      *
      * If some callbacks never complete (e.g. the callback contains an infinite loop),
      * the other callbacks may not get thread to be executed at all.
-     * In these cases, a potentially blocking callback must use the blocking{}.
+     *
+     * In these cases, a potentially blocking callback must use the blocking{} :
+     *
+     * Future {
+     *   blocking {  // - thanks to some default max waiting time, is can avoid deadlock.
+     *      // some blocking stuff
+     *   }
+     * }
      */
 
     val aFuture: Future[UpperCaseName] = newAsyncFuture(globalEC)
@@ -930,7 +937,7 @@ object ab_IntroToFunProg {
      *
      *     Future[U].andThen(pf: PartialFunction[Try[U], Any]): Future[U]
      *
-     * eg:  Future{ /* ... */}
+     * eg:  Future { /* ... */}
      *       .andThen{ case Success(sth) => log.info(sth)}
      *       .andThen{ case Failure(t) => log.error(t)}
      *
@@ -943,7 +950,6 @@ object ab_IntroToFunProg {
      *
      * If future fails, then failed() returns Success(Throwable)
      * If future succeeds, then failed returns Failure()
-     *
      */
   }
 
