@@ -913,8 +913,17 @@ object ab_IntroToFunProg {
      *
      *   recover[U](     pf: PartialFunction[Throwable, U]         ): Future[U]
      *   recoverWith[U]( pf: PartialFunction[Throwable, Future[U] ]): Future[U]
-     *
      */
+
+    /**
+     * Function that gives another shoot for another futer to be successful is :fallbackTo():
+     *
+     *     Future[U].fallbackTo(second: Future[U]): Future[U]
+     *
+     * If first future fails and the second one is successfull, then second one will be returned.
+     * If both fail, the failure of the first one will be returned.
+     */
+
   }
 
 }
