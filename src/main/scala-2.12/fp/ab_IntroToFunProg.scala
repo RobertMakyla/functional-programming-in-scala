@@ -962,12 +962,20 @@ object ab_IntroToFunProg {
      *
      * Promise.future           - returning the future of this promise (but it's not completing future)
      *
-     * Promise.success(t: T): Promise[T]          - COMPLETING future with success !
-     * Promise.failure(t: Throwable): Promise[T]  - COMPLETING future with failure !
-     * Promise.complete(t: Try[T]): Promise[T]    - COMPLETING future with success or failure ...
+     * Promise.success(t: T): Promise[T]               - COMPLETING future with success !
+     * Promise.failure(t: Throwable): Promise[T]       - COMPLETING future with failure !
+     * Promise.complete(t: Try[T]): Promise[T]         - COMPLETING future with success or failure, depending on argument
+     * Promise.completeWith(f: Future[T]): Promise[T]  - COMPLETING future with success or failure, depending on argument
      *
-     * WARNING: calling complete() and then success() or failure() will throw IllegalStateException
+     * WARNING: if either 2 of these functions are called, it will throw IllegalStateException
      *          because we can/should complete Promise only once
+     *
+     *
+     *  safer but non-deterministic:
+     *
+     * Promise.trySuccess(t: T): Boolean          - COMPLETING  if it's not complete yet, returns Boolean if it was complete
+     * Promise.tryCailure(t: Throwable): Boolean  - COMPLETING  if it's not complete yet, returns Boolean if it was complete
+     * Promise.tryComplete(t: Try[T]): Boolean    - COMPLETING  if it's not complete yet, returns Boolean if it was complete
      */
 
     def newFutureFromPromise[T](someValue: T)(shouldPass: Boolean): Future[T] = {
