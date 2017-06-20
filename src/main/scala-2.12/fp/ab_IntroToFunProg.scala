@@ -964,9 +964,13 @@ object ab_IntroToFunProg {
      *
      * Promise.success(t: T): Promise[T]          - COMPLETING future with success !
      * Promise.failure(t: Throwable): Promise[T]  - COMPLETING future with failure !
+     * Promise.complete(t: Try[T]): Promise[T]    - COMPLETING future with success or failure ...
+     *
+     * WARNING: calling complete() and then success() or failure() will throw IllegalStateException
+     *          because we can/should complete Promise only once
      */
 
-    def newFutureFromPromise[T](t: T)(shouldPass: Boolean): Future[T] = {
+    def newFutureFromPromise[T](someValue: T)(shouldPass: Boolean): Future[T] = {
 
       val p = Promise[T]()
       val f = p.future
@@ -974,7 +978,7 @@ object ab_IntroToFunProg {
       println(s"at first, Promise.future is ${if (f.isCompleted) "" else "NOT"} completed ... ")
 
       if (shouldPass) //but abut the result we can decide long after future is complete.
-        p success t
+        p success someValue
       else
         p failure new RuntimeException("you said it should fail")
 
