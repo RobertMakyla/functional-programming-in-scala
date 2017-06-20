@@ -373,6 +373,21 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
     }
 
+    "Promise - container for completed futures with possibility to change result" in {
+      import scala.concurrent.ExecutionContext.Implicits.global
+
+      newFutureFromPromise("Robert")(shouldPass = true).onComplete {
+        case Success(res: String) => // ok
+        case Failure(t) => fail()
+      }
+
+      newFutureFromPromise("Robert")(shouldPass = false).onComplete {
+        case Success(res: String) => fail()
+        case Failure(t) => // ok
+      }
+
+    }
+
   }
 
 }

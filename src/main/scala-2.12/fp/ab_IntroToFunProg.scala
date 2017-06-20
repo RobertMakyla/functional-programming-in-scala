@@ -1,7 +1,7 @@
 package fp
 
 import scala.annotation.tailrec
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future, Promise}
 import scala.util.{Failure, Success, Try}
 
 object ab_IntroToFunProg {
@@ -948,9 +948,40 @@ object ab_IntroToFunProg {
     /**
      * Projection Future[U].failed  - inverting result if we care about future failure
      *
-     * If future fails, then failed() returns Success(Throwable)
-     * If future succeeds, then failed returns Failure()
+     * If future fails, then it returns Success(Throwable)
+     * If future succeeds, then failed returns Failure(NoSuchElementException)
      */
+
+    def futureFailed(ec: ExecutionContext) = newFailingFuture(ec).failed.onComplete {
+      case Success(t: Throwable) => println("ok, we got failure as expected")
+      case Failure(nse: NoSuchElementException) => println("somwthing went wrong")
+    }(ec)
+
+    /**
+     * Promises - write-once container which completes a future.
+     *
+     * Promise.future           - returning the future of this promise (but it's not completing future)
+     *
+     * Promise.success(t: T): Promise[T]          - COMPLETING future with success !
+     * Promise.failure(t: Throwable): Promise[T]  - COMPLETING future with failure !
+     */
+
+    def newFutureFromPromise[T](t: T)(shouldPass: Boolean): Future[T] = {
+
+      val p = Promise[T]()
+      val f = p.future
+
+      println(s"at first, Promise.future is ${if (f.isCompleted) "" else "NOT"} completed ... ")
+
+      if (shouldPass) //but abut the result we can decide long after future is complete.
+        p success t
+      else
+        p failure new RuntimeException("you said it should fail")
+
+      println(s"but after using success() or failure(), Promise's future ${if (f.isCompleted) "gets" else "still NOT"} completed ... ")
+
+      f
+    }
   }
 
 }
