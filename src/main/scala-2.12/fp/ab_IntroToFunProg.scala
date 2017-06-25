@@ -994,6 +994,26 @@ object ab_IntroToFunProg {
 
       f
     }
+
+    /**
+     * Sequence of Futures - asynchronous (parallel) execution of many futures
+     *
+     * Future.sequence(s: Seq[Future[T]]): Future[Seq[T]] completes when either:
+     * - all the futures have completed successfully, then in onComplete it matches Success(sequenceOfValues)
+     * - one of the futures has failed, then OnComplete it goes to Failure(firstThrowable) and stops waiting for other futures
+     */
+
+    def sequenceOfFutures(ec: ExecutionContext) = {
+      implicit val ecImplicit = ec
+
+      val manyfutures: Seq[Future[UpperCaseName]] = Seq(newAsyncFuture(ec), newAsyncFuture(ec))
+
+      Future.sequence(manyfutures).onComplete {
+        case Success(upperCaseNames: Seq[UpperCaseName]) => println("each future completed successfully")
+        case Failure(t: Throwable) => println("some future has failed with " + t.getMessage)
+      }
+
+    }
   }
 
 }
