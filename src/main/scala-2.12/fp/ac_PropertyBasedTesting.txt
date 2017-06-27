@@ -1,0 +1,34 @@
+Property based testing is based on automatic, test data Generators:
+
+
+// Int
+val genInt: Gen[Int] = arbitrary[Int]
+val genInt2: Gen[Int] = Gen.choose(0, 10)
+
+// List
+val genListOfInts: Gen[List[Int]] = Gen.listOf(genInt)
+
+
+// classes
+
+sealed abstract class Tree
+case class Node(left: Tree, right: Tree, v: Int) extends Tree
+case class Leaf(v: Int) extends Tree
+
+object Trees extends Properties("trees") {
+
+  val genLeaf = arbitrary[Int].map(Leaf(_))
+
+  val genNode = for {
+    v <- arbitrary[Int]
+    left <- genTree
+    right <- genTree
+  } yield Node(left, right, v)
+
+  def genTree: Gen[Tree] = Gen.frequency(  // node will be picked twice more often
+    (2, genNode),
+    (1, genLeaf)
+  )
+
+  def genTreeFair = oneOf( genNode, genLeaf )   // 50/50 chances to pick node or leaf
+}
