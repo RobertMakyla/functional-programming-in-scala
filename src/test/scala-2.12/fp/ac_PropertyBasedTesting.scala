@@ -63,3 +63,24 @@ object Trees extends Properties("trees") {
     }
 
 }
+
+/**
+ * Exercise 8.2
+ * What properties specify a function that finds the maximum of a List[Int] ?
+ */
+object TestingMaxPropertyOfList extends Properties("List.max()") {
+
+  val genInt: Gen[Int] = arbitrary[Int]
+  val genListOfInts: Gen[List[Int]] = Gen.nonEmptyListOf(genInt)
+
+  property("max is bigger or equal any element of a list") =
+    forAll(genListOfInts) {
+      (ls: List[Int]) => ls.forall(_ <= ls.max)
+    }
+
+  property("max is in the list") =
+    forAll(genListOfInts) {
+      (ls: List[Int]) => ls.contains(ls.max)
+    }
+
+}
