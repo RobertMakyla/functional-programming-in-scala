@@ -46,12 +46,12 @@ object Trees extends Properties("trees") {
     right <- genTree
   } yield Node(left, right, v)
 
-  def genTree: Gen[Tree] = Gen.frequency( // picked 100/100
+  def genTree: Gen[Tree] = Gen.frequency(
     (100, genNode),
-    (100, genLeaf)
+    (110, genLeaf) // leaf picked slightly more often, to prevent stackOverflow
   )
 
-  //  def genTree: Gen[Tree] = oneOf(genLeaf, genNode)
+  //def genTree: Gen[Tree] = oneOf(genLeaf, genNode)
 
   println(genTree.sample)
 

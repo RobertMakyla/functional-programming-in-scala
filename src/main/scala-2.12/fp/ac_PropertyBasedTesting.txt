@@ -1,4 +1,5 @@
-Property based testing is based on automatic, test data Generators:
+PROPERTY BASED testing is based on automatic, test data Generators.
+When we generate our test data, then we can do any kinds of tests on it's PROPERTIES
 
 
 // Int
