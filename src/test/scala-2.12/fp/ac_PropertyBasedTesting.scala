@@ -31,17 +31,28 @@ object ListOfInts extends Properties("reversing list of elems") {
 
 }
 
-sealed abstract class Tree
-case class Node(left: Tree, right: Tree, v: Int) extends Tree
-case class Leaf(v: Int) extends Tree
+sealed abstract class Tree{
+  def sum: Int
+  def maxDepth: Int
+}
+case class Node(left: Tree, right: Tree, v: Int) extends Tree {
+  def sum = left.sum + right.sum + v
+  def maxDepth = 1 + (if(left.maxDepth > right.maxDepth) left.maxDepth else right.maxDepth)
+}
+case class Leaf(v: Int) extends Tree {
+  def sum = v
+  def maxDepth: Int = 1
+}
 
 object Trees extends Properties("trees") {
 
-  val genLeaf = arbitrary[Int].map(Leaf(_))
-  //val genLeaf: Gen[Leaf] = Gen.choose(0, 10).map(Leaf(_))
+  val genPositiveInt = Gen.choose(0, 10)
+
+  //val genLeaf = arbitrary[Int].map(Leaf(_))
+  val genLeaf: Gen[Leaf] = genPositiveInt.map(Leaf(_))
 
   val genNode = for {
-    v <- arbitrary[Int]
+    v <- genPositiveInt
     left <- genTree
     right <- genTree
   } yield Node(left, right, v)
@@ -53,13 +64,17 @@ object Trees extends Properties("trees") {
 
   //def genTree: Gen[Tree] = oneOf(genLeaf, genNode)
 
-  println(genTree.sample)
+  genTree.sample.foreach { t =>
+    println("sample tree          : " + t)
+    println("sample tree sum      : " + t.sum)
+    println("sample tree maxDepth : " + t.maxDepth)
+  }
 
-  property("tree is being generated for testing") =
-    forAll(genTree) { t: Tree =>
-      println(t)
-      // do some testing of tree
-      true
+  property("tree sum") =
+    forAll(genTree) { t: Tree => t match {
+      case Node(l, r, v) => t.sum == l.sum + r.sum + v
+      case Leaf(v) => t.sum == v
+      }
     }
 
 }
