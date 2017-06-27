@@ -83,19 +83,33 @@ object Trees extends Properties("trees") {
  * Exercise 8.2
  * What properties specify a function that finds the maximum of a List[Int] ?
  */
+
+object FunctionToTest {
+  def myMax(ls: List[Int]): Option[Int] = ls match {
+    case Nil => None
+    case h :: t =>
+      val maxFromTail: Option[Int] = myMax(t)
+      maxFromTail.fold(Some(h)) { (someMaxFromTail: Int) =>
+        if (h >= someMaxFromTail) Some(h) else Some(someMaxFromTail)
+      }
+  }
+}
+
 object TestingMaxPropertyOfList extends Properties("List.max()") {
 
+  import FunctionToTest._
+
   val genInt: Gen[Int] = arbitrary[Int]
-  val genListOfInts: Gen[List[Int]] = Gen.nonEmptyListOf(genInt)
+  val genNonEmptyListOfInts: Gen[List[Int]] = Gen.nonEmptyListOf(genInt)
 
   property("max is bigger or equal any element of a list") =
-    forAll(genListOfInts) {
-      (ls: List[Int]) => ls.forall(_ <= ls.max)
+    forAll(genNonEmptyListOfInts) {
+      (nonEmptyList: List[Int]) => nonEmptyList.forall(_ <= myMax(nonEmptyList).get)
     }
 
   property("max is in the list") =
-    forAll(genListOfInts) {
-      (ls: List[Int]) => ls.contains(ls.max)
+    forAll(genNonEmptyListOfInts) {
+      (nonEmptyList: List[Int]) => nonEmptyList.contains(myMax(nonEmptyList).get)
     }
 
 }
