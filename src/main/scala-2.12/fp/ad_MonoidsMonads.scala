@@ -1,0 +1,90 @@
+package fp
+
+object ad_MonoidsMonads {
+
+  object Monoids {
+
+    /**
+     * Monoids
+     *
+     * - they give possibility to break problem into chunks to use it in parallel programming.
+     */
+
+    /**
+     * Monoids consists of 3 things:
+     *
+     * 1. some type A (can be String, Int, Boolean)
+     * 2. an associative binary operation ( + , * , &&)
+     *
+     * associative operation:  (a op b) op c = a op (b op c)
+     *
+     * 3. Identity element of type A, applicable anywhere, not bringing any change :
+     *
+     * a op z = a
+     * z op a = a
+     *
+     * Eg: String, +, ""
+     * Eg: List, ++, Nil
+     * Eg: Int, *, 1
+     * Eg: Int, +, 0
+     */
+
+    trait Monoid[A] {
+      def op(a: A, b: A): A
+
+      def zero: A
+    }
+
+    /**
+     * Implement monoid: String, +, ""
+     */
+    val stringMonoid = new Monoid[String] {
+      override def op(a: String, b: String): String = a + b
+
+      override def zero: String = ""
+    }
+
+    /**
+     * Ex 10.3
+     *
+     * A function having the same argument and return type is sometimes called an
+     * endofunction. Write a monoid for endofunctions:
+     *
+     * (type: A=>A, operation: ??? , zero element: ??? )
+     */
+    def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
+      def op(a1: A => A, a2: A => A): A => A = a1 compose a2
+
+      def zero: A => A = identity // (a => a)
+    }
+
+    /** Ex 10.4 use property-based testing to test monoid laws */
+
+    /**
+     * Folding lists with Monoids :
+     *
+     * Because of associativity and identity element laws,
+     * fold left and fold right must give the same result
+     */
+
+    val words = List("a", "b", "c")
+
+    val foldedWords1 = words.foldLeft(stringMonoid.zero)(stringMonoid.op) // abc
+
+    val foldedWords2 = words.foldRight(stringMonoid.zero)(stringMonoid.op) // abc
+
+
+    /**
+     * Ex 10.5
+     * If our type doesn't fit to any Monoid, we need to map it to some other type which does.
+     *
+     * Implement foldMap:
+     *
+     * def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B
+     */
+
+    def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
+      as.map(f).foldLeft(m.zero)(m.op)
+  }
+
+}
