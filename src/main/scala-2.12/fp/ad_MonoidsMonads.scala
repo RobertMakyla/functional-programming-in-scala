@@ -8,6 +8,14 @@ object ad_MonoidsMonads {
      * Monoids
      *
      * - they give possibility to break problem into chunks to use it in parallel programming.
+     *
+     * foldLeft/foldRight can't be done parallely because it's:  op(a, op(b, op(c, d)))
+     *
+     * but BALANCED FOLD can compute in parallel,
+     * and thanks to monoid laws we are sure that result is the same
+     * no matter how it gets split into chunks of computations:
+     *
+     * op( op(a,b) , op(c,d) )
      */
 
     /**
