@@ -1,5 +1,6 @@
 package fp
 
+import fp.ad_MonoidsMonads.Monoids.Monoid
 import fp.ad_MonoidsMonads._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Prop.forAll
@@ -9,7 +10,7 @@ import org.scalatest.{FreeSpec, MustMatchers}
 class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
 
   "Monoids" - {
-    import Monoids.stringMonoid._
+    import Monoids.stringConcat._
 
     "String, +, \"\" - operation must be associative" in {
       op(op("a", "b"), "c") mustBe op("a", op("b", "c"))
@@ -18,13 +19,26 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
       op("a", zero) mustBe "a"
       op(zero, "a") mustBe "a"
     }
+
+    "composing Monoids into products" in {
+      import Monoids.productMonoid
+      import Monoids.intMultiplication
+      import Monoids.stringConcat
+
+      val x = (100, "hello")
+      val y = (200, "world")
+
+      val productM: Monoid[(Int, String)] = productMonoid(intMultiplication, stringConcat)
+
+      productM.op(x, y) mustBe (20000, "helloworld")
+      productM.zero mustBe (1, "")
+    }
   }
 }
 
-
 object MonoidLaws extends Properties("monoid String, +, \"\" ") {
 
-  import Monoids.stringMonoid._
+  import Monoids.stringConcat._
 
   val genString: Gen[String] = arbitrary[Char].map(_.toString)
 

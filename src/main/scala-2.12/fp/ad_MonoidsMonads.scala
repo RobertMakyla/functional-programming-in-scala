@@ -46,10 +46,18 @@ object ad_MonoidsMonads {
     /**
      * Implement monoid: String, +, ""
      */
-    val stringMonoid = new Monoid[String] {
+    val stringConcat = new Monoid[String] {
       override def op(a: String, b: String): String = a + b
 
       override def zero: String = ""
+    }
+
+    /**
+     * Implement monoid: Int, *, 1
+     */
+    val intMultiplication = new Monoid[Int] {
+      def op(a1: Int, a2: Int) = a1 * a2
+      val zero = 1
     }
 
     /**
@@ -77,9 +85,9 @@ object ad_MonoidsMonads {
 
     val words = List("a", "b", "c")
 
-    val foldedWords1 = words.foldLeft(stringMonoid.zero)(stringMonoid.op) // abc
+    val foldedWords1 = words.foldLeft(stringConcat.zero)(stringConcat.op) // abc
 
-    val foldedWords2 = words.foldRight(stringMonoid.zero)(stringMonoid.op) // abc
+    val foldedWords2 = words.foldRight(stringConcat.zero)(stringConcat.op) // abc
 
 
     /**
@@ -93,6 +101,19 @@ object ad_MonoidsMonads {
 
     def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
       as.map(f).foldLeft(m.zero)(m.op)
+
+    /**
+     * Monoids are composable
+     * if A and B are monoids, then tuple (A, B) is also a monoid (called their product)
+     *
+     * Implement def productMonoid[A,B](a: Monoid[A], b: Monoid[B]): Monoid[(A,B)]
+     */
+
+    def productMonoid[A, B](a: Monoid[A], b: Monoid[B]): Monoid[(A, B)] = new Monoid[(A, B)] {
+      override def op(t1: (A, B), t2: (A, B)): (A, B) = (a.op(t1._1, t2._1), b.op(t1._2, t2._2))
+      override def zero: (A, B) = (a.zero, b.zero)
+    }
+
   }
 
 }
