@@ -1,5 +1,7 @@
 package fp
 
+import fp.ab_IntroToFunProg.HandlingErrorsWithoutExceptions.MySome
+
 object ad_MonoidsMonads {
 
   object Monoids {
@@ -129,6 +131,11 @@ object ad_MonoidsMonads {
      * - unit(a: A): Monad[A]
      */
 
+    trait Monad[A] {
+      def flatMap[B](f: A => Monad[B]): Monad[B]
+      def unit(a: => A): Monad[A]
+    }
+
     /**
      * Since Monad needs only 2 functions by definition, where do we get map() from ?
      * Isn't it required eg. in for-comprehension ?
@@ -146,4 +153,5 @@ object ad_MonoidsMonads {
 
   }
 
+  // now 11.4
 }
