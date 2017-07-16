@@ -116,4 +116,34 @@ object ad_MonoidsMonads {
 
   }
 
+  object Monads {
+
+    /**
+     * Functors - all types that implement .map(f: A => B)  (eg; Option, List, ... )
+     */
+
+    /**
+     * Monads - type which have 2 functions :
+     *
+     * - flatMap(f: A => Monad[B]): Monad[B]
+     * - unit(a: A): Monad[A]
+     */
+
+    /**
+     * Since Monad needs only 2 functions by definition, where do we get map() from ?
+     * Isn't it required eg. in for-comprehension ?
+     * Answer: map() can be implemented with flatMap and unit:
+     */
+
+    /** Implement map() using flatmap and unit
+     *
+     * def map[A,B](ls: List[A], f: A=>B): List[B] */
+
+    def map[A, B](ls: List[A], f: A => B): List[B] = {
+      def unit[T](t: T): List[T] = List.apply(t)
+      ls.flatMap(a => unit(f(a)))
+    }
+
+  }
+
 }

@@ -34,6 +34,15 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
       productM.zero mustBe (1, "")
     }
   }
+
+  "Monads" - {
+    import Monads._
+
+    "implementing Monad's map() using flatMap() and unit()" in {
+      map[Int, String](List(1, 2, 3), elem => "" + elem) mustBe
+        List("1", "2", "3")
+    }
+  }
 }
 
 object MonoidLaws extends Properties("monoid String, +, \"\" ") {
