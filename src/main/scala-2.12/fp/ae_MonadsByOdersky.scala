@@ -100,15 +100,23 @@ Even if Try is not a Monad, it is still good for for-comprehension, cause it has
    * They are composable (eg in for-comprehension, or using flatMap)
    */
 
-  def k1(i: Int): Option[Int] = Some(i)
-  def k2(i: Int): Option[Int] = Some(i * 2)
-  def k3(i: Int): Option[Int] = Some(i * 3)
-  def k4(i: Int): Option[Int] = Some(i * 4)
+  def k1(i: Int): Option[Int] = { println("kleisli-1"); Some(i + 1)     }
+  def k2(i: Int): Option[Int] = { println("kleisli-2"); Some(i * 2) }
+  def k3(i: Int): Option[Int] = { println("kleisli-3"); Some(i * 3) }
 
-  def composingKleisli(i: Int): Option[Int] = for {
+  def composingKleisliWithForComprehension(i: Int): Option[Int] = for {
     r1 <- k1(i)
     r2 <- k2(r1)
     r3 <- k3(r2)
   } yield r3
 
+  def composingKleisliByDesugaringForComprehension(i: Int): Option[Int] =
+    k1(i).flatMap {
+      r1 => k2(r1).flatMap { // this flatMap{ ... } is just flatMap(k3)
+        r2 => k3(r2)
+      }
+    }
+
+  def composingKleisliWithFlatMaps(i: Int)=
+    k1(i).flatMap(k2).flatMap(k3)
 }
