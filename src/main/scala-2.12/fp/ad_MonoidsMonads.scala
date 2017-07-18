@@ -151,7 +151,14 @@ object ad_MonoidsMonads {
       ls.flatMap(a => unit(f(a)))
     }
 
+    /**
+     * Q: Is Monad[T] a Functor[F] ?
+     *
+     * A: Yes, because each Monad has flatMap and unit
+     *    so it can implement map() - the only function required for Functor
+     */
+
+
   }
 
-  // now 11.4
 }

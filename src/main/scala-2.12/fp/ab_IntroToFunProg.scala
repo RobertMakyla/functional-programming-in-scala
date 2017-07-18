@@ -554,6 +554,21 @@ object ab_IntroToFunProg {
       result1 == result2
     }
 
+    /**
+     * Question: difference between filter() ad withFilter()
+     */
+
+    /**
+     * Answer:
+     *
+     * filter() - will take the original collection and produce a new collection
+     *
+     * withFilter() - will non-strictly (ie. lazily) pass unfiltered values through to later map/flatMap calls,
+     * saving another pass through the (filtered) collection, hence it's more efficient.
+     *
+     * withFilter() -  is specifically designed for working with chains of these methods (map/flatMap),
+     * which is what a for comprehension is de-sugared into.
+     */
   }
 
   object Streams {
