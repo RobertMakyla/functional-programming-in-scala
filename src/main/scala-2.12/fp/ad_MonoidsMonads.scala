@@ -131,7 +131,7 @@ object ad_MonoidsMonads {
 
     trait Monad[A] {
       def flatMap[B](f: A => Monad[B]): Monad[B]
-      def unit(a: => A): Monad[A]
+      def unit(a: A): Monad[A]
     }
 
     /**
@@ -161,19 +161,9 @@ object ad_MonoidsMonads {
      * Definition 2 (from red book)
      *
      * Monad can also be type which has unit() and compose() functions, and satisfies monadic laws.
-     * But still compose can be implemented in terms of flatMap and vice versa
+     * But still compose can be easily implemented in terms of flatMap.
+     * So definition with unit() and flatMap() seems minimal.
      */
-
-    /**
-     * Q: Implement flatMap(kleisli) in terms of compose(kleisli1, kleisli2)
-     */
-
-    trait Monad2[A] {
-      def unit(a: => A): Monad2[A]
-      def compose[B, C](k1: A => Monad2[B], k2: B => Monad2[C]): A => Monad2[C]
-
-      def flatMap[B](f: A => Monad2[B]) = compose(f, unit)
-    }
 
     /**
      * Q: Implement compose(kleisli1, kleisli2) in terms of flatMap(kleisli)
@@ -185,6 +175,17 @@ object ad_MonoidsMonads {
       def compose[B,C](k1: A => Monad3[B], k2: B => Monad3[C]): A => Monad3[C] =
         (a:A) => k1(a).flatMap(k2)
     }
+
+    /** Implement the simplest Monad: Wrapper[A](a: A) */
+
+    case class MyWrapper[A](a: A) extends Monad[A] {
+      override def flatMap[B](f: (A) => Monad[B]): Monad[B] = f(a)
+      override def unit(a: A): Monad[A] = MyWrapper(a)
+
+      def map[B](f: A=>B): MyWrapper[B] = MyWrapper(f(a)) //useful in for-comprehension
+    }
+
+
 
   }
 

@@ -42,6 +42,23 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
       map[Int, String](List(1, 2, 3), elem => "" + elem) mustBe
         List("1", "2", "3")
     }
+
+    "testing the simplest monad: Wrapper[A](a: A)" in {
+      import fp.ad_MonoidsMonads.Monads.MyWrapper
+
+      for {
+        r1 <- MyWrapper("hello")
+        r2 <- MyWrapper(r1)
+        r3 <- MyWrapper(r2)
+      } yield r3 mustBe "hello"
+
+      for {
+        r1 <- MyWrapper("hello")
+        r2 <- MyWrapper(", world")
+        r3 <- MyWrapper(r1 + r2)
+      } yield r3 mustBe "hello, world"
+
+    }
   }
 }
 
