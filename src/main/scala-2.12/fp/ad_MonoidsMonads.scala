@@ -123,7 +123,7 @@ object ad_MonoidsMonads {
      */
 
     /**
-     * Monads - type which have 2 functions :
+     * Monads - type which has 2 functions :
      *
      * - flatMap(f: A => Monad[B]): Monad[B]
      * - unit(a: A): Monad[A]
@@ -156,6 +156,36 @@ object ad_MonoidsMonads {
      * A: Yes, because each Monad has flatMap and unit
      *    so it can implement map() - the only function required for Functor
      */
+
+    /**
+     * Definition 2 (from red book)
+     *
+     * Monad can also be type which has unit() and compose() functions, and satisfies monadic laws.
+     * But still compose can be implemented in terms of flatMap and vice versa
+     */
+
+    /**
+     * Q: Implement flatMap(kleisli) in terms of compose(kleisli1, kleisli2)
+     */
+
+    trait Monad2[A] {
+      def unit(a: => A): Monad2[A]
+      def compose[B, C](k1: A => Monad2[B], k2: B => Monad2[C]): A => Monad2[C]
+
+      def flatMap[B](f: A => Monad2[B]) = compose(f, unit)
+    }
+
+    /**
+     * Q: Implement compose(kleisli1, kleisli2) in terms of flatMap(kleisli)
+     */
+    trait Monad3[A] {
+      def flatMap[B](f: A => Monad3[B]): Monad3[B]
+      def unit(a: => A): Monad3[A]
+
+      def compose[B,C](k1: A => Monad3[B], k2: B => Monad3[C]): A => Monad3[C] =
+        (a:A) => k1(a).flatMap(k2)
+    }
+
   }
 
 }
