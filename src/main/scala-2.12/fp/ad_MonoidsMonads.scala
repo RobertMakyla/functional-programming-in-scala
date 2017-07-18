@@ -1,7 +1,5 @@
 package fp
 
-import fp.ab_IntroToFunProg.HandlingErrorsWithoutExceptions.MySome
-
 object ad_MonoidsMonads {
 
   object Monoids {
@@ -137,9 +135,10 @@ object ad_MonoidsMonads {
     }
 
     /**
-     * Since Monad needs only 2 functions by definition, where do we get map() from ?
+     * Q: Since Monad needs only 2 functions by definition, where do we get map() from ?
      * Isn't it required eg. in for-comprehension ?
-     * Answer: map() can be implemented with flatMap and unit:
+     *
+     * A: map() can be implemented with flatMap and unit:
      */
 
     /** Implement map() using flatmap and unit
@@ -157,8 +156,6 @@ object ad_MonoidsMonads {
      * A: Yes, because each Monad has flatMap and unit
      *    so it can implement map() - the only function required for Functor
      */
-
-
   }
 
 }
