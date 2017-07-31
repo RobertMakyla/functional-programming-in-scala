@@ -35,6 +35,7 @@ object ad_MonoidsMonads {
      * Eg: List, ++, Nil
      * Eg: Int, *, 1
      * Eg: Int, +, 0
+     * EG: Monad[T], flatMap(), unit()
      */
 
     trait Monoid[A] {
