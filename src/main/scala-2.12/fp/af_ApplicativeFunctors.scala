@@ -34,12 +34,26 @@ object af_ApplicativeFunctors {
 
   trait Applicative1[A] {
     def map2[B, C](fb: Applicative1[B])(f: (A, B) => C): Applicative1[C]
-    def unit(a: A): Applicative1[A]
+    def unit[T](a: T): Applicative1[T]
+
+    /**
+     * Implement apply in terms of map2
+     */
+    def apply2[C](f: Applicative1[A => C]): Applicative1[C] =
+      map2(f: Applicative1[A => C])((a: A, a2c: A => C) => a2c(a))
+
+    /** All Applicatives are Functors ... Prove it: */
+    def map[C](f: A => C): Applicative1[C] =
+      map2(unit(f): Applicative1[A => C])((a: A, a2c: A => C) => a2c(a))
+
   }
 
   trait Applicative2[A] {
     def apply[B](f: Applicative2[A => B]): Applicative2[B]
-    def unit(a: A): Applicative2[A]
+    def unit[T](a: T): Applicative2[T]
+
+    /** All Applicatives are Functors ... Prove it: */
+    def map[B](f: A => B): Applicative2[B] = apply(unit(f))
   }
 
   /**
