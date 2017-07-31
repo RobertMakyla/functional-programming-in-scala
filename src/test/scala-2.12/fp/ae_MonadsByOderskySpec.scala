@@ -9,7 +9,7 @@ class ae_MonadsByOderskySpec extends FreeSpec with MustMatchers {
 
     "Composing kleisli arrows" in {
 
-      val expected = Some(18)
+      val expected = Some(3)
       println("composing Kleisli With For Comprehension")
       composingKleisliWithForComprehension(2) mustBe expected
 

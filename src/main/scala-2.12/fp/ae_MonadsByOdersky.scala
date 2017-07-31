@@ -102,7 +102,7 @@ Even if Try is not a Monad, it is still good for for-comprehension, cause it has
 
   def k1(i: Int): Option[Int] = { println("kleisli-1"); Some(i + 1)     }
   def k2(i: Int): Option[Int] = { println("kleisli-2"); Some(i * 2) }
-  def k3(i: Int): Option[Int] = { println("kleisli-3"); Some(i * 3) }
+  def k3(i: Int): Option[Int] = { println("kleisli-3"); Some(i - 3) }
 
   def composingKleisliWithForComprehension(i: Int): Option[Int] = for {
     r1 <- k1(i)
@@ -116,6 +116,14 @@ Even if Try is not a Monad, it is still good for for-comprehension, cause it has
         r2 => k3(r2)
       }
     }
+
+// it's the same as :
+//
+//    k1(i).flatMap { r1 => k2(r1).flatMap(k3)  }
+//
+// and using associativity law, it's the same as :
+//
+//    k1(i).flatMap(k2).flatMap(k3)
 
   def composingKleisliWithFlatMaps(i: Int)=
     k1(i).flatMap(k2).flatMap(k3)
