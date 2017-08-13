@@ -124,5 +124,12 @@ object af_ApplicativeFunctors {
    *
    */
 
-
+  /**
+   * Applicative laws:
+   *
+   * 1. Left identity  : map2(unit(()), fa)((_,a) => a) == fa
+   * 2. Right identity : map2(fa, unit(()))((a,_) => a) == fa
+   *
+   * 3. Associativity  : (ap1.map2(ap2)(f) ).map2(ap3)(f) == ap1.map2( ap2.map2(ap3)(f) )(f)
+   */
 }

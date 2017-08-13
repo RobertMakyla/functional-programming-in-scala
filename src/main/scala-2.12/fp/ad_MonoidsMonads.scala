@@ -35,7 +35,13 @@ object ad_MonoidsMonads {
      * Eg: List, ++, Nil
      * Eg: Int, *, 1
      * Eg: Int, +, 0
-     * EG: Monad[T], flatMap(), unit()  (because one of monadic law is associativity of flatMap)
+     * EG: Monad[T], flatMap(), unit()   - because one of monadic law is associativity of flatMap
+     *
+     *                    ( m1.flatMap(f1) ).flatMap(f2) == m1.flatMap( x => f1(x).flatMap(f2) )
+     *
+     * EG: Applicative[T], map2, unit()  - because applicative is associative on map2:
+     *
+     *                    (ap1.map2(ap2)(f) ).map2(ap3)(f) == ap1.map2( ap2.map2(ap3)(f) )(f)
      */
 
     trait Monoid[A] {
