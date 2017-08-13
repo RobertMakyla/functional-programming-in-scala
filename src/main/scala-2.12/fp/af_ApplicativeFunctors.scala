@@ -48,10 +48,6 @@ object af_ApplicativeFunctors {
     def map2[B, C](fb: Applicative1[B])(f: (A, B) => C): Applicative1[C]
     def unit[T](a: T): Applicative1[T]
 
-    /** All Applicatives are Functors ... Prove it: */
-    def map[B](f: A => B): Applicative1[B] =
-      map2(unit( () ))((a, _) => f(a))
-
     /**
      * Implement apply in terms of map2
      */
@@ -61,6 +57,10 @@ object af_ApplicativeFunctors {
     /** All Applicatives are Functors ... Prove it: */
     def map[C](f: A => C): Applicative1[C] =
       map2(unit(f): Applicative1[A => C])((a: A, a2c: A => C) => a2c(a))
+
+    /** or simpler */
+    def another_map[C](f: A => C): Applicative1[C] =
+      map2(unit( () ): Applicative1[Unit])((a: A, _) => f(a) )
 
   }
 
