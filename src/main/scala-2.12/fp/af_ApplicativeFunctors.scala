@@ -70,7 +70,7 @@ object af_ApplicativeFunctors {
    * - Monad - the result of previous computation has influence weather we continue with computations
    *   (context sensitive computations)
    *
-   * - Applicatives - has fixed structure of computation (even if some element if None, we still do the rest of computations)
+   * - Applicatives - has fixed structure of computation (even if some element is None, we still do the rest of computations)
    *   (context-free computations)
    *
    * eg : map2(maybeAddress, maybeLetter)( deliver: (address, letter) => DeliveryRecord): Option[DeliveryRecord]
