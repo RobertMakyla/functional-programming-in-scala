@@ -121,7 +121,11 @@ Even if Try is not a Monad, it is still good for for-comprehension, cause it has
 //
 //    k1(i).flatMap { r1 => k2(r1).flatMap(k3)  }
 //
-// and using associativity law, it's the same as :
+// and using associativity law :
+//
+//  1 + (2 + 3) == (1 + 2) + 3 == 1+2+3
+//
+// it's the same as :
 //
 //    k1(i).flatMap(k2).flatMap(k3)
 
