@@ -60,14 +60,6 @@ object ad_MonoidsMonads {
     }
 
     /**
-     * Implement monoid: Int, *, 1
-     */
-    val intMultiplication = new Monoid[Int] {
-      def op(a1: Int, a2: Int) = a1 * a2
-      val zero = 1
-    }
-
-    /**
      * Ex 10.3
      *
      * A function having the same argument and return type is sometimes called an
