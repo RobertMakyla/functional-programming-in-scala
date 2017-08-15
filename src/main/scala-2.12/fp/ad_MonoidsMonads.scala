@@ -35,9 +35,50 @@ object ad_MonoidsMonads {
      * Eg: List, ++, Nil
      * Eg: Int, *, 1
      * Eg: Int, +, 0
-     * EG: Monad[T], flatMap(), unit()   - because one of monadic law is associativity of flatMap
+     * EG: X => Monad[Y], flatMap(), unit()   - because one of monadic law is associativity of flatMap
      *
-     *                    ( m1.flatMap(f1) ).flatMap(f2) == m1.flatMap( x => f1(x).flatMap(f2) )
+     *      0 + (1 + 2) == (0 + 1) + 2
+     *
+     *      x => f0(x).flatMap( x => f1(x).flatMap(f2) ) == x => f0(x).flatMap(f1).flatMap(f2)
+     *
+     *      (0+1) + 2 + 3 + (4+5)
+     *
+     *      (f0.flatMap(f1)).flatMap(f2).flatMap(f3).flatMap( x => f4(x).flatMap(f5)
+     *
+     *  for {
+     *    i <- a
+     *    j <- b(i)
+     *    k <- c(i, j)
+     *  } d (i, j, k)
+     *
+     *  to to samo co to:
+     *
+     *  a.flatMap { i =>
+     *     b(i).flatMap { j =>
+     *        c(i, j).map { k =>
+     *           d(i, j, k)
+     *        }
+     *     }
+     *  }
+     *
+     *	Dzięki temu że (Kleisli arrow X=>Monad[Y], flatMap, unit) jest monoidą, możemy skorzystać z associativity
+     *	czyli możemy nestować jak chcemy flatMapy w for-comprehension, dekomponując kod na osobne funkcje
+     *	które zwracają monadę.. albo wszystko płasko m1.flatMap(f).flatMap(f).flatMap(f) ... jak chcemy ...
+     *
+     *  To jest największy gain faktu że (X=>Monad[Y], flatMap, unit) jest monoidą..
+     *
+     *  Bo fakt że dzięki associativity samo składanie funcji można zrownoleglić teoretycznie na 2 wątki
+     *  to nie przynosi dużego gain'a
+     *  (składanie funkcji jest trywialne - to komuptacje zajmują dużo czasu i zwykle to je chcemy zparallelizować)
+     *
+     *  for {
+     *     n      <- m
+     *     (i, j) <- for {
+     *                  i <- a(n)
+     *                  j <- b(i)
+     *               } yield (i, j)
+     *     k      <- c(i, j)
+     *  } yield d(i, j, k)
      *
      * EG: Applicative[T], map2, unit()  - because applicative is associative on map2:
      *
