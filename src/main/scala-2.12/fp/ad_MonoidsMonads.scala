@@ -41,10 +41,6 @@ object ad_MonoidsMonads {
      *
      *      x => f0(x).flatMap( x => f1(x).flatMap(f2) ) == x => f0(x).flatMap(f1).flatMap(f2)
      *
-     *      (0+1) + 2 + 3 + (4+5)
-     *
-     *      (f0.flatMap(f1)).flatMap(f2).flatMap(f3).flatMap( x => f4(x).flatMap(f5)
-     *
      *  for {
      *    i <- a
      *    j <- b(i)
@@ -67,10 +63,6 @@ object ad_MonoidsMonads {
      *
      *  To jest największy gain faktu że (X=>Monad[Y], flatMap, unit) jest monoidą..
      *
-     *  Bo fakt że dzięki associativity samo składanie funcji można zrownoleglić teoretycznie na 2 wątki
-     *  to nie przynosi dużego gain'a
-     *  (składanie funkcji jest trywialne - to komuptacje zajmują dużo czasu i zwykle to je chcemy zparallelizować)
-     *
      *  for {
      *     n      <- m
      *     (i, j) <- for {
@@ -79,6 +71,17 @@ object ad_MonoidsMonads {
      *               } yield (i, j)
      *     k      <- c(i, j)
      *  } yield d(i, j, k)
+     *
+     *
+     *  Bo fakt że dzięki associativity samo składanie funcji można zrownoleglić teoretycznie na 2 wątki
+     *  to nie przynosi dużego gain'a (składanie funkcji jest trywialne - to komuptacje zajmują dużo czasu
+     *  i zwykle to je chcemy zparallelizować) :
+     *
+     *      (0+1) + 2 + 3 + (4+5)
+     *
+     *      (f0.flatMap(f1)).flatMap(f2).flatMap(f3).flatMap( x => f4(x).flatMap(f5)
+     *
+     *
      *
      * EG: Applicative[T], map2, unit()  - because applicative is associative on map2:
      *
