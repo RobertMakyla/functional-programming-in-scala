@@ -104,6 +104,15 @@ object ad_MonoidsMonads {
     }
 
     /**
+     * Implement monoid: Int, *, 1
+     */
+    val intMultiplication = new Monoid[Int]{
+      override def op(a: Int, b: Int): Int = a * b
+
+      override def zero: Int = 1
+    }
+
+    /**
      * Ex 10.3
      *
      * A function having the same argument and return type is sometimes called an
