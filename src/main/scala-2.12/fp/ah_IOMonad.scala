@@ -66,6 +66,9 @@ object ah_IOMonad {
    *
    * Problems:
    * - it can hang forever (like readLine when user never enters the value)
-   * - we cannot tell it it's done in sync or async way (our example is doing sync way)
+   * - we cannot tell it it's done in sync or async way
+   *   (our example is doing sync way but we could du run() in separate thread.. like Future)
+   * - writing efficient, streaming I/O will generally involve monolithic loops (ex processing file 1 line at time)
+   *   (if we don't want to load whole file to memory - streaming is the answer, but processing loops are ugly - we cannot compose them)
    */
 }
