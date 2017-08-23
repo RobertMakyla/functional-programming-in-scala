@@ -57,4 +57,15 @@ object ah_IOMonad {
       _ <- printLine("" + theInt)
     } yield ()
 
+  /**
+   * IO[A] Monad is just a monad returning some value of type A, after runnign side effects.
+   *
+   * Benefits:
+   * - We can use it to clearly separate pure functional code from side effects.
+   * - Since we can use forComprehension, we can craft one IO from many IOs, or play with map/flatMap
+   *
+   * Problems:
+   * - it can hang forever (like readLine when user never enters the value)
+   * - we cannot tell it it's done in sync or async way (our example is doing sync way)
+   */
 }
