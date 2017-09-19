@@ -58,7 +58,7 @@ object ah_IOMonad {
     } yield ()
 
   /**
-   * IO[A] Monad is just a monad returning some value of type A, after runnign side effects.
+   * IO[A] Monad is just a monad returning some value of type A, after running side effects.
    *
    * Benefits:
    * - We can use it to clearly separate pure functional code from side effects.
