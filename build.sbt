@@ -11,6 +11,7 @@ libraryDependencies ++= {
 
   Seq(
     "org.scalatest"  %% "scalatest"  % scalaTestV % "test",
-    "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test"
+    "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test",
+    "net.codingwell" %% "scala-guice" % "4.1.0"
   )
 }
