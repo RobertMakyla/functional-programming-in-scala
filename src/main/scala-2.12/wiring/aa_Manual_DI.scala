@@ -2,17 +2,33 @@ package wiring
 
 /**
  * Pros:
- * - dependencies go only one level. We should never pass dependencies through many levels.
  *
- *   if we put deepestDependency as Top's parameter, we would need to pass it through all layers
- *   painful - too much boilerplate (unnecessarily repeated) code
+ * - dependencies are checked an compile-time
  *
- * - it's nice in Scala - thanks to main constructor we don't need to save constructor's params as private fields (unlike in Java)
+ * - Safes start-up time: no run-time reflection, scanning for annotations, DI containers to start
+ * - Flexibility: we are free from any constraint of framework - more flexibility
+ * - Simpler than Guice, because:
  *
- * - Simpler than Guice, which:
- *   1. doesn't have code navigation
- *   2. requires much more code (modules, binders, providers)
- *   3. requires learning new library to use it effectively.
+ * 1. Guice doesn't have code navigation
+ * 2. Guice requires more code (modules, binders, providers)
+ * 3. Guice requires learning (as new framework) to use it effectively.
+ *
+ */
+
+/**
+ * Cons:
+ * - manually creating and wiring each instance may be tedious.
+ */
+
+/**
+ * To remember:
+ *
+ * - for small projects (micro services) it should be enough
+ *
+ * - dependencies should go only one level. We should never pass dependencies through many levels.
+ *
+ * if we put deepestDependency as Top's parameter, we would need to pass it through all layers
+ * painful - too much boilerplate (unnecessarily repeated) code
  */
 object aa_Manual_DI {
 
@@ -31,7 +47,7 @@ object aa_Manual_DI {
   class RealDeepestDependency extends DeepestDependency
   class TestDeepestDependency extends DeepestDependency
 
-  // to nam zastępuje konfigurację z kontenera DI
+  //this it the part that normally the DI CONTAINER does:
   object ProductionModule {
     val deepestDependency = new RealDeepestDependency
     val bottom = new Bottom(deepestDependency)
