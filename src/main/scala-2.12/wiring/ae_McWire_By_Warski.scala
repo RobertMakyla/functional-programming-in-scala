@@ -51,12 +51,19 @@ object ae_McWire_By_Warski {
   class TestDeepestDependency extends DeepestDependency {def goDeeper() = println("Test one")}
 
   object ProductionModule {
-    //lazy vals / vals - are singletons
 
-    lazy val deepestDependency = wire[RealDeepestDependency]
-    //lazy val deepestCausingWireError = new TestDeepestDependency
+    // Multiple Implementations
+    val isProd = true
+    lazy val deepestDependency =
+      if (isProd) wire[RealDeepestDependency] else wire[TestDeepestDependency]
+
+    // Example of compile-time error :
+    //lazy val anotherValueCausingWireError = new TestDeepestDependency
+
     lazy val bottom = wire[Bottom]
     lazy val middle = wire[Middle]
+
+    // lazy vals / vals - are singletons
     //lazy val top = wire[Top]
 
     // different instance each time:
