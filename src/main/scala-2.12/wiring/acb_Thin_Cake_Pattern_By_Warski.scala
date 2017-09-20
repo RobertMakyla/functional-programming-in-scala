@@ -63,7 +63,7 @@ package train {
     lazy val timetable = wire[TrainTimetable]
     lazy val train = wire[Train]
 
-    //dependencies of this module
+    // Interceptors - implementation depends on other modules
     def warsCounter: WarsCounter
     def ticketController: TicketController
   }
