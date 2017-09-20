@@ -4,7 +4,7 @@ import com.google.inject.{Guice, Injector, Module}
 import net.codingwell.scalaguice.InjectorExtensions._
 import org.scalatest.{FreeSpec, MustMatchers}
 
-class aa_Google_Guice_Spec extends FreeSpec with MustMatchers {
+class ab_Google_Guice_Spec extends FreeSpec with MustMatchers {
 
   "Wiring should work in " - {
 

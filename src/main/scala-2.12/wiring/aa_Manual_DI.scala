@@ -14,7 +14,7 @@ package wiring
  *   2. requires much more code (modules, binders, providers)
  *   3. requires learning new library to use it effectively.
  */
-object ab_Constructors_By_PiotrTarsa {
+object aa_Manual_DI {
 
   def main(args: Array[String]): Unit = {
     val application = ProductionModule.top
