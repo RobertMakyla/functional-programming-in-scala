@@ -5,6 +5,16 @@ object ad_MonoidsMonads {
   object Monoids {
 
     /**
+     * In "Category Theory" we have following categories :
+     *
+     * Magma     - type T and some binary operation (not associative)
+     * Semigroup - type T + associative operation
+     * Monoid    - type T + associative operation + identity element (zero element)
+     * Group     - type T + associative operation + identity element (zero element)
+     *             + invertibility (for each element 'a: T' there is another 'b:T' for which op(a,b) == zero element
+     */
+
+    /**
      * Monoids
      *
      * - they give possibility to break problem into chunks to use it in parallel programming.
@@ -92,6 +102,16 @@ object ad_MonoidsMonads {
       def op(a: A, b: A): A
 
       def zero: A
+    }
+
+    /**
+     * Semigroup is Monoid but without identity - just type and associative operation
+     *
+     * so each monoid is semi group (but additionally with identity element)
+     */
+
+    trait Semigroup[A] {
+      def op(a: A, b: A): A
     }
 
     /**
