@@ -199,6 +199,9 @@ object ad_MonoidsMonads {
      *
      * - flatMap(f: A => Monad[B]): Monad[B]
      * - unit(a: A): Monad[A]
+     *
+     * unit() is just wrapping A => Monad[A], but flatMap shows that MONAD is all ABOUT FLOW CONTROL.
+     * flatMap defines how to transform M[A] into M[B] having function A=>M[B] just need to get A from M[A]
      */
 
     trait Monad[A] {
