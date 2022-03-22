@@ -16,5 +16,8 @@ class aj_TypeClassSpec extends FreeSpec with MustMatchers{
       "a" ajoute "b" mustBe "ab"
     }
 
+    "List" in {
+      List(1, 2, 3) ajoute List(4, 5) mustBe List(1, 2, 3, 4, 5)
+    }
   }
 }

@@ -19,6 +19,11 @@ object aj_TypeClass{
     override def elementNeutre: String = ""
   }
 
+  implicit def listFrenchAdder[E] = new FrenchAdder[List[E]] {
+    override def ajoute(a: List[E], b: List[E]): List[E] = a ++ b
+    override def elementNeutre: List[E] = List.empty[E]
+  }
+
   // Ops API
   implicit class FrenchAdderOps[A](value: A) {
     def ajoute(b: A)(implicit adder: FrenchAdder[A]): A = adder.ajoute(value, b)
