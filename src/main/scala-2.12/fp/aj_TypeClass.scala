@@ -25,9 +25,16 @@ object aj_TypeClass{
   }
 
   // Ops API
-  implicit class FrenchAdderOps[A](value: A) {
-    def ajoute(b: A)(implicit adder: FrenchAdder[A]): A = adder.ajoute(value, b)
-    def elementNeutre(implicit adder: FrenchAdder[A]): A = adder.elementNeutre
+
+  //implicit class FrenchAdderOps[A](value: A) {
+  //  def ajoute(b: A)(implicit adder: FrenchAdder[A]): A = adder.ajoute(value, b)
+  //  def elementNeutre(implicit adder: FrenchAdder[A]): A = adder.elementNeutre
+  //}
+
+  implicit class FrenchAdderElegantOps[A : FrenchAdder](value: A) {
+    def ajoute(b: A): A = implicitly[FrenchAdder[A]].ajoute(value, b)
+    def elementNeutre: A = implicitly[FrenchAdder[A]].elementNeutre
   }
+
 
 }
