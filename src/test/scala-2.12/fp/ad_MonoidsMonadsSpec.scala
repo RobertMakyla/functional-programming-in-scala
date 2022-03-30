@@ -59,6 +59,34 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
       } yield r3 mustBe "hello, world"
 
     }
+
+    "testing Monads associativity" in {
+
+      // for comprehension
+      val y: Option[Int] = for {
+        a: Int <- Some(10)
+        b: Int <- Some(a*2)
+        c: Int <- Some(b+3)
+      } yield c
+
+      //de-sugared for comprehension
+      val y1 =
+        Some(10).flatMap(
+          a => Some(a * 2).flatMap(
+            b => Some(b + 3)
+          )
+        )
+
+      // flat way
+      val y2 = Some(10)
+        .flatMap(a => Some(a * 2))
+        .flatMap(b => Some(b + 3))
+
+      y mustBe y1
+      y1 mustBe y2
+
+    }
+
   }
 }
 
