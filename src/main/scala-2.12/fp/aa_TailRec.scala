@@ -16,13 +16,6 @@ object aa_TailRec {
   def factorialDirectWay(n: Int, acc: Int = 1): Int = if (n == 0) acc else factorialDirectWay(n - 1, acc * n)
 
   /**
-   * @param n - iterates down, to stop when n == 0
-   * @param i - iterates up, from 1 to n
-   */
-  @tailrec // continuation passing style
-  def factorialCPS(n: Int, i: Int = 1, acc: Int = 1): Int = if (n == 0) acc else factorialCPS(n - 1, i + 1, acc * i)
-
-  /**
    * sum(n) = 0 + 1 + 2 + 3 + ... + n
    *
    * Here I can use direct way because + is associative function: (1 + 2) + 3 == (3 + 2) + 1
@@ -33,12 +26,6 @@ object aa_TailRec {
   @tailrec
   def sumDirectWay(n: Int, acc: Int = 0): Int = if (n == 0) acc else sumDirectWay(n - 1, acc + n)
 
-  /**
-   * @param n - iterates down, to stop when n == 0
-   * @param i - iterates up, from 1 to n
-   */
-  @tailrec // continuation passing style
-  def sumCPS(n: Int, i: Int = 1, acc: Int = 0): Int = if (n == 0) acc else sumCPS(n - 1, i + 1, acc + i)
 
   /**
    * fib(n) = fib(n-1) + fib(n-2)
