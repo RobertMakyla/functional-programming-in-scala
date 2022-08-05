@@ -13,12 +13,12 @@ class aa_TailRecSpec extends FreeSpec with MustMatchers{
       factorialDirectWay(4) mustBe 24
     }
 
-    "continuation passing style" in {
-      factorialCPS(1) mustBe 1
-      factorialCPS(2) mustBe 2
-      factorialCPS(3) mustBe 6
-      factorialCPS(4) mustBe 24
-    }
+//    "continuation passing style" in {
+//      factorialCPS(1) mustBe 1
+//      factorialCPS(2) mustBe 2
+//      factorialCPS(3) mustBe 6
+//      factorialCPS(4) mustBe 24
+//    }
   }
 
   "Sum" - {
@@ -29,13 +29,13 @@ class aa_TailRecSpec extends FreeSpec with MustMatchers{
       sumDirectWay(3) mustBe 6
       sumDirectWay(4) mustBe 10
     }
-    "continuation passing style" in {
-      sumCPS(0) mustBe 0
-      sumCPS(1) mustBe 1
-      sumCPS(2) mustBe 3
-      sumCPS(3) mustBe 6
-      sumCPS(4) mustBe 10
-    }
+//    "continuation passing style" in {
+//      sumCPS(0) mustBe 0
+//      sumCPS(1) mustBe 1
+//      sumCPS(2) mustBe 3
+//      sumCPS(3) mustBe 6
+//      sumCPS(4) mustBe 10
+//    }
   }
 
   "Fibonacci number - continuation passing style" in {
