@@ -41,23 +41,30 @@ object aj_TypeClass{
    */
   case class Person(name: String, age: Int)
 
-  trait MyEq[A] {
-    def ===(a: A, b: A) : Boolean
-    def =!=(a: A, b: A) : Boolean
+  trait MyEqual[A] {
+    def ===(a: A, b:A): Boolean
+    def =|=(a: A, b:A): Boolean
   }
 
-  implicit val eqPerson = new MyEq[Person] {
-    def ===(a1: Person, a2: Person): Boolean = a1.name == a2.name && a1.age == a2.age
-    def =!=(a1: Person, a2: Person): Boolean = a1.name != a2.name || a1.age != a2.age
+  class PersonEqual extends MyEqual[Person] {
+    override def ===(a: Person, b: Person): Boolean = a.name ==b.name && a.age == b.age
+    override def =|=(a: Person, b: Person): Boolean = a.name != b.name || a.age != b.age
   }
+  implicit val personEq = new PersonEqual
 
-  implicit class MyEqOps[A](a: A)(implicit ev: MyEq[A]) {
-    def ===(b: A) = ev.===(a, b)
-    def =!=(b: A) = ev.=!=(a, b)
+  implicit class MyEqualOps[T: MyEqual](that: T)(implicit eq: MyEqual[T]) {
+    def ===(t: T) = eq.===(t, that)
+    def =|=(t: T) = eq.=|=(t, that)
   }
+  // or
+  //
+  //  implicit class newMyEqualOps[T: MyEqual](that: T) {
+  //    def ===(t: T) = implicitly[MyEqual[T]].===(t, that)
+  //    def =|=(t: T) = implicitly[MyEqual[T]].=|=(t, that)
+  //  }
 
 
-  def usageOfEqualTypeSafeForPerson(a: Person, b: Person): Boolean = a === b
+  val isTheSame = Person("Rob", 37)  === Person("MArk", 19)
 
 
 }
