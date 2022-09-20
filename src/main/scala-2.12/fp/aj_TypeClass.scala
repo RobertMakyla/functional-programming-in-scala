@@ -36,5 +36,28 @@ object aj_TypeClass{
     def elementNeutre: A = implicitly[FrenchAdder[A]].elementNeutre
   }
 
+  /**
+   * OTHER example
+   */
+  case class Person(name: String, age: Int)
+
+  trait MyEq[A] {
+    def ===(a: A, b: A) : Boolean
+    def =!=(a: A, b: A) : Boolean
+  }
+
+  implicit val eqPerson = new MyEq[Person] {
+    def ===(a1: Person, a2: Person): Boolean = a1.name == a2.name && a1.age == a2.age
+    def =!=(a1: Person, a2: Person): Boolean = a1.name != a2.name || a1.age != a2.age
+  }
+
+  implicit class MyEqOps[A](a: A)(implicit ev: MyEq[A]) {
+    def ===(b: A) = ev.===(a, b)
+    def =!=(b: A) = ev.=!=(a, b)
+  }
+
+
+  def usageOfEqualTypeSafeForPerson(a: Person, b: Person): Boolean = a === b
+
 
 }
