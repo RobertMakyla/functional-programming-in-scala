@@ -1,5 +1,7 @@
 package fp
 
+import scala.util.control.NonFatal
+
 object ad_MonoidsMonads {
 
   object Monoids {
@@ -67,7 +69,7 @@ object ad_MonoidsMonads {
      *     }
      *  }
      *
-     *	Dzięki temu że (Kleisli arrow X=>Monad[Y], flatMap, unit) jest monoidą, możemy skorzystać z associativity
+     *	Dzięki temu że monada (Kleisli arrow X=>Monad[Y], flatMap, unit) jest monoidą, możemy skorzystać z associativity
      *	czyli możemy nestować jak chcemy flatMapy w for-comprehension, dekomponując kod na osobne funkcje
      *	które zwracają monadę.. albo wszystko płasko m1.flatMap(f).flatMap(f).flatMap(f) ... jak chcemy ...
      *
@@ -209,58 +211,83 @@ object ad_MonoidsMonads {
       def unit(a: A): Monad[A]
     }
 
-    /**
-     * Q: Since Monad needs only 2 functions by definition, where do we get map() from ?
-     * Isn't it required eg. in for-comprehension ?
-     *
-     * A: map() can be implemented with flatMap and unit:
-     */
-
     /** Implement map() using flatmap and unit
+     *
+     * Prove that a Monad is a functor :)
      *
      * def map[A,B](ls: List[A], f: A=>B): List[B] */
 
     def map[A, B](ls: List[A], f: A => B): List[B] = {
       def unit[T](t: T): List[T] = List.apply(t)
-      ls.flatMap(a => unit(f(a)))
+      ls.flatMap( (a:A) => unit(f(a)))
     }
 
-    /**
-     * Q: Is Monad[T] a Functor[F] ?
-     *
-     * A: Yes, because each Monad has flatMap and unit
-     *    so it can implement map() - the only function required for Functor
-     */
 
-    /**
-     * Definition 2 (from red book)
-     *
-     * Monad can also be type which has unit() and compose() functions, and satisfies monadic laws.
-     * But still compose can be easily implemented in terms of flatMap.
-     * So definition with unit() and flatMap() seems minimal.
-     */
-
-    /**
-     * Q: Implement compose(kleisli1, kleisli2) in terms of flatMap(kleisli)
-     */
-    trait Monad3[A] {
-      def flatMap[B](f: A => Monad3[B]): Monad3[B]
-      def unit(a: => A): Monad3[A]
-
-      def compose[B,C](k1: A => Monad3[B], k2: B => Monad3[C]): A => Monad3[C] =
-        (a:A) => k1(a).flatMap(k2)
-    }
 
     /** Implement the simplest Monad: Wrapper[A](a: A) */
 
     case class MyWrapper[A](a: A) extends Monad[A] {
-      override def flatMap[B](f: (A) => Monad[B]): Monad[B] = f(a)
-      override def unit(a: A): Monad[A] = MyWrapper(a)
+      override def flatMap[B](f: A => Monad[B]): Monad[B] = f(a)
+      override def unit[T](t: T): Monad[T] = new MyWrapper(t)
 
-      def map[B](f: A=>B): MyWrapper[B] = MyWrapper(f(a)) //useful in for-comprehension
+      def map[B](f: A=>B) = flatMap( (a:A) => unit(f(a)))
+    }
+
+    case class NonEmptyList[A](head: A, tail: List[A]) {
+
+      def flatMap[B](f: A => NonEmptyList[B]): NonEmptyList[B] = {
+        val bs: List[B] = list.flatMap( a => f(a).list)
+        NonEmptyList(bs.head, bs.tail)
+      }
+      def unit(a: A): NonEmptyList[A] = NonEmptyList(a, Nil)
+
+      def map[B](f: A=>B): NonEmptyList[B] = {
+        val bs = list.map(f)
+        NonEmptyList(bs.head, bs.tail)
+      }
+
+      def list: List[A] = head :: tail //useful
+    }
+    object NonEmptyList {
+      def apply[A](head: A, tail: A* /*0-n*/ ): NonEmptyList[A] = NonEmptyList(head, tail.toList)
     }
 
 
+    sealed trait MyOption[+A] {
+      def flatMap[B](f: A => MyOption[B]): MyOption[B] = this match {
+        case MySome(a) => f(a)
+        case MyNone => MyNone
+      }
+      def unit[B](b: B): MyOption[B] = MySome[B](b)
+      def map[B](f: A=>B): MyOption[B] = this match {
+        case MySome(a) => MySome(f(a))
+        case MyNone => MyNone
+      }
+    }
+    case class MySome[A](a: A) extends MyOption[A]
+    case object MyNone extends MyOption[Nothing]
+
+    sealed trait MyTry[T]{
+      def flatMap[U](f: T => MyTry[U]): MyTry[U] = this match {
+        case MySuccess(x) => try { f(x) } catch { case NonFatal(e) => MyFailure(e) }
+        case MyFailure(t) => MyFailure(t)
+      }
+      def unit(t: T): MyTry[T] = MySuccess(t)
+      def map[B](f: T=>B): MyTry[B] = this match {
+        case MySuccess(x) => MySuccess(f(x))
+        case MyFailure(t) => MyFailure(t)
+      }
+    }
+    case class MySuccess[T](t: T) extends MyTry[T]
+    case class MyFailure[T](t: Throwable) extends MyTry[T]
+
+    object MyTry {
+      def apply[T](expr: => T): MyTry[T] =
+        try MySuccess(expr)
+        catch {
+          case NonFatal(e) => MyFailure(e)
+        }
+    }
 
   }
 

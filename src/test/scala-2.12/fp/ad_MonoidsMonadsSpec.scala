@@ -9,31 +9,6 @@ import org.scalatest.{FreeSpec, MustMatchers}
 
 class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
 
-  "Monoids" - {
-    import Monoids.stringConcat._
-
-    "String, +, \"\" - operation must be associative" in {
-      op(op("a", "b"), "c") mustBe op("a", op("b", "c"))
-    }
-    "String, +, \"\" - zero element must be applicable anywhere, not changing result" in {
-      op("a", zero) mustBe "a"
-      op(zero, "a") mustBe "a"
-    }
-
-    "composing Monoids into products" in {
-      import Monoids.productMonoid
-      import Monoids.intMultiplication
-      import Monoids.stringConcat
-
-      val x = (100, "hello")
-      val y = (200, "world")
-
-      val productM: Monoid[(Int, String)] = productMonoid(intMultiplication, stringConcat)
-
-      productM.op(x, y) mustBe (20000, "helloworld")
-      productM.zero mustBe (1, "")
-    }
-  }
 
   "Monads" - {
     import Monads._
@@ -59,7 +34,38 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
       } yield r3 mustBe "hello, world"
 
     }
+    "testing NonEmptyList Monad" in {
 
+      val res = for {
+        a <- NonEmptyList(1, 2)
+        b <- NonEmptyList(10, 100)
+      } yield a * b
+      res mustBe NonEmptyList(10, 100, 20, 200)
+    }
+
+    "testing MyOption Monad" in {
+
+      val res = for {
+        a <- MySome(3)
+        b <- MySome(a * 2)
+        c <- MySome(b * 5)
+      } yield "" + c
+      res mustBe MySome("30")
+
+      MySome(3).flatMap(i => MyNone) mustBe MyNone
+    }
+
+    "testing MyTry Monad" in {
+
+
+      val res = for {
+        a <- MyTry(3)
+        b <- MyTry(a * 2)
+        c <- MyTry(b * 5)
+      } yield "" + c
+      res mustBe MySuccess("30")
+
+    }
     "testing Monads associativity" in {
 
       // for comprehension
@@ -88,20 +94,4 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
     }
 
   }
-}
-
-object MonoidLaws extends Properties("monoid String, +, \"\" ") {
-
-  import Monoids.stringConcat._
-
-  val genString: Gen[String] = arbitrary[Char].map(_.toString)
-
-  property("associativity") =
-    forAll(genString, genString, genString) {
-      (s1: String, s2: String, s3: String) => op(op(s1, s2), s3) == op(s1, op(s2, s3))
-    }
-  property("identity element") =
-    forAll(genString) {
-      (s: String) => op(s, zero) == s && op(zero, s) == s
-    }
 }
