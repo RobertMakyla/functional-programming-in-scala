@@ -1,21 +1,23 @@
 package fp
 
 import fp.ab_IntroToFunProg._
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success}
 
-class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
+class ab_IntroToFunProgSpec extends AnyFreeSpec with Matchers {
 
   "Polymorphic Functions" - {
     import PolymorphicFunctions._
 
     case class TestCase(ls: List[Int], expectedResult: Boolean)
+
     def naturally = (a: Int, b: Int) => a < b
 
-    "isSorted, isSortedTailRec" in {
+    "isSorted" in {
       List(
         TestCase(List.empty[Int], true),
         TestCase(List(1), true),
@@ -23,10 +25,12 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
         TestCase(List(1, 2, 3, 4), true),
         TestCase(List(1, 2, 4, 3), false),
         TestCase(List(1, 2, 4, 4), false),
-        TestCase(List(1, 2, 4, 5, 6), true)
+        TestCase(List(1, 2, 4, 4, 5), false),
+        TestCase(List(1, 2, 4, 5, 6), true),
+        TestCase(List(1, 2, 4, 5, 7), true),
+        TestCase(List(1, 2, 4, 5, 8), true)
       ).foreach { test =>
         isSorted(test.ls, naturally) mustBe test.expectedResult
-        isSortedTailRec(test.ls, naturally) mustBe test.expectedResult
       }
     }
 
@@ -37,6 +41,7 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
     "curry" in {
       def sizeIsOK(i: Int, s: String): Boolean = s.length == i
+
       val actual: Int => String => Boolean = curry(sizeIsOK)
 
       actual(3)("abc") mustBe true
@@ -45,48 +50,51 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
     "uncurry" in {
       def sizeIsOK(i: Int)(s: String): Boolean = s.length == i
+
       val actual: (Int, String) => Boolean = uncurry(sizeIsOK)
 
       actual(3, "abc") mustBe true
       actual(0, "abc") mustBe false
     }
 
-    "compose" in {
-      compose(b2c, a2b)("abc") mustBe 3L
-    }
-    "andThen" in {
-      andThen(a2b, b2c)("abc") mustBe 3L
-    }
+    //    "compose" in {
+    //      compose(b2c, a2b)("abc") mustBe 3L
+    //    }
+    //    "andThen" in {
+    //      andThen(a2b, b2c)("abc") mustBe 3L
+    //    }
 
     def a2b(s: String): Int = s.length
+
     def b2c(i: Int): Long = i.toLong
   }
 
   "Functional Data Structures" - {
     import FunctionalDataStructures._
-    "tail" in {
-      tail(List(1, 2, 3)) mustBe List(2, 3)
-      intercept[IllegalArgumentException](tail(Nil)).getMessage mustBe "list should not be empty"
-    }
-    "head" in {
-      setHead(1, List(2, 3)) mustBe List(1, 2, 3)
-      setHead(1, Nil) mustBe List(1)
-    }
-    "drop" in {
-      drop(List(1, 2, 3), 1) mustBe List(2, 3)
-      drop(List(1, 2, 3), 3) mustBe Nil
-      intercept[IllegalArgumentException](drop(List(1, 2), 3)).getMessage mustBe "list is too small"
-    }
-    "dropWhile" in {
-      dropWhile[Int](List(1, 2, 3, 4, 5, 6, 7), _ % 2 == 0) mustBe List(1, 3, 5, 7)
-      dropWhile[String](List("a", "bb", "ccc", "dd"), _.length >= 2) mustBe List("a")
-    }
-    "init" in {
-      init(List(1, 2, 3, 4, 5)) mustBe List(1, 2, 3, 4)
-      init(List(1, 2)) mustBe List(1)
-      init(List(1)) mustBe Nil
-      intercept[IllegalArgumentException](init(Nil)).getMessage mustBe "list should not be empty"
-    }
+    //    "tail" in {
+    //      tail(List(1, 2, 3)) mustBe List(2, 3)
+    //      intercept[IllegalArgumentException](tail(Nil)).getMessage mustBe "list should not be empty"
+    //    }
+    //    "head" in {
+    //      setHead(1, List(2, 3)) mustBe List(1, 2, 3)
+    //      setHead(1, Nil) mustBe List(1)
+    //    }
+    //    "drop" in {
+    //      drop(List(1, 2, 3), 1) mustBe List(2, 3)
+    //      drop(List(1, 2, 3), 3) mustBe Nil
+    //      intercept[IllegalArgumentException](drop(List(1, 2), 3)).getMessage mustBe "list is too small"
+    //    }
+    //    "dropWhile" in {
+    //      dropWhile[Int](List(1, 2, 3, 4, 5, 6, 7), _ % 2 == 0) mustBe List(1, 3, 5, 7)
+    //      dropWhile[String](List("a", "bb", "ccc", "dd"), _.length >= 2) mustBe List("a")
+    //    }
+    //    "init" in {
+    //      init(List(1, 2, 3, 4, 5)) mustBe List(1, 2, 3, 4)
+    //      init(List(1, 2)) mustBe List(1)
+    //      init(List(1)) mustBe Nil
+    //      intercept[IllegalArgumentException](init(Nil)).getMessage mustBe "list should not be empty"
+    //    }
+
     "length() using foldRight" in {
       FunctionalDataStructures.length(Nil) mustBe 0
       FunctionalDataStructures.length(List(1)) mustBe 1
@@ -109,15 +117,15 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       foldRight(List("a", "b"), "c")(_ + _) mustBe "abc"
     }
 
-    "append in terms of foldRight" in {
-      appendViaFoldRight(Nil, 1) mustBe List(1)
-      appendViaFoldRight(List(1, 2, 3), 4) mustBe List(1, 2, 3, 4)
-    }
-
-    "append in terms of foldLeft" in {
-      appendViaFoldLeft(Nil, 1) mustBe List(1)
-      appendViaFoldLeft(List(1, 2, 3), 4) mustBe List(1, 2, 3, 4)
-    }
+    //    "append in terms of foldRight" in {
+    //      appendViaFoldRight(Nil, 1) mustBe List(1)
+    //      appendViaFoldRight(List(1, 2, 3), 4) mustBe List(1, 2, 3, 4)
+    //    }
+    //
+    //    "append in terms of foldLeft" in {
+    //      appendViaFoldLeft(Nil, 1) mustBe List(1)
+    //      appendViaFoldLeft(List(1, 2, 3), 4) mustBe List(1, 2, 3, 4)
+    //    }
 
     "flatten" in {
       val input = List(List(1), List(2), List(3, 4), Nil, List(5))
@@ -145,173 +153,50 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       zip(List(1, 2, 3), List(100)) mustBe List(101, 2, 3)
       zip(List(100), List(1, 2, 3)) mustBe List(101, 2, 3)
     }
-    "zipWith" in {
-      zipWith(List(1, 2, 3), List(4, 5, 6))(_ + _) mustBe List(5, 7, 9)
-      zipWith(List(1, 2, 3), List(100))(_ + _) mustBe List(101, 2, 3)
-      zipWith(List(100), List(1, 2, 3))(_ + _) mustBe List(101, 2, 3)
+    "append " in {
+      appendWithFoldLeft(Nil, 2) mustBe List(2)
+      appendWithFoldLeft(List(1), 2) mustBe List(1,2)
+      appendWithFoldLeft(List(1,3,4), 2) mustBe List(1,3,4,2)
+      appendWithFoldRight(Nil, 2) mustBe List(2)
+      appendWithFoldRight(List(1), 2) mustBe List(1, 2)
+      appendWithFoldRight(List(1, 3, 4), 2) mustBe List(1, 3, 4, 2)
     }
-    "hasSubsequence" in {
-      //impossible due to size difference
-      hasSubsequence(Nil, List(1)) mustBe false
-      hasSubsequence(List(1), List(1, 2)) mustBe false
-      //possible due to size difference
-      hasSubsequence(Nil, Nil) mustBe true
-      hasSubsequence(List(1, 2, 3, 4), Nil) mustBe true
-      hasSubsequence(List(1, 2, 3, 4), List(2)) mustBe true
-      hasSubsequence(List(1, 2, 3, 4), List(2, 4)) mustBe false
-      hasSubsequence(List(1, 2, 3, 4), List(3, 4)) mustBe true
-      hasSubsequence(List(1, 2, 3, 4), List(1, 2, 3, 4)) mustBe true
+    "prenend " in {
+      prependWithFoldLeft(Nil, 2) mustBe List(2)
+      prependWithFoldLeft(List(1), 2) mustBe List(2, 1)
+      prependWithFoldLeft(List(1, 3, 4), 2) mustBe List(2, 1, 3, 4)
+      prependWithFoldRight(Nil, 2) mustBe List(2)
+      prependWithFoldRight(List(1), 2) mustBe List(2, 1)
+      prependWithFoldRight(List(1, 3, 4), 2) mustBe List(2, 1, 3, 4)
     }
 
-    val tree = Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Branch(Leaf(9), Branch(Leaf(2), Leaf(3)))))
-
-    "tree size" in {
-      FunctionalDataStructures.size(tree) mustBe 11
-      FunctionalDataStructures.sizeViaFold(tree) mustBe 11
-    }
-    "tree max" in {
-      FunctionalDataStructures.max(tree) mustBe 9
-      FunctionalDataStructures.maxViaFold(tree) mustBe 9
-    }
-    "tree depth" in {
-      FunctionalDataStructures.depth(tree) mustBe 5
-      FunctionalDataStructures.depthViaFold(tree) mustBe 5
-    }
-    "tree map" in {
-      FunctionalDataStructures.map(tree)("" + _) mustBe
-        Branch(Leaf("1"), Branch(Branch(Leaf("2"), Leaf("3")), Branch(Leaf("9"), Branch(Leaf("2"), Leaf("3")))))
-
-      FunctionalDataStructures.mapViaFold(tree)("" + _) mustBe
-        Branch(Leaf("1"), Branch(Branch(Leaf("2"), Leaf("3")), Branch(Leaf("9"), Branch(Leaf("2"), Leaf("3")))))
+    "collect " in {
+      val f: PartialFunction[Int, String] = {
+        case x if (x % 2) == 0 => (x * 100).toString
+      }
+      collect(List(1,2,3,4), f) mustBe List("200", "400")
     }
 
   }
 
-  "Handling Errors Without Exceptions" - {
-    import HandlingErrorsWithoutExceptions._
-
-    "Option" - {
-      "map(), flatMap(), filter" in {
-        MySome(123).map(_ * 100) mustBe MySome(12300)
-        MySome(123).flatMap(i => MySome(i * 100)) mustBe MySome(12300)
-        MySome(123).filter(_ > 100) mustBe MySome(123)
-        MySome(123).filter(_ < 100) mustBe MyNone
-
-        MySome(123).getOrElse(0) mustBe 123
-        (MyNone: MyOption[Int]).getOrElse(0) mustBe 0
-
-        MySome(123).orElse(MySome(4)) mustBe MySome(123)
-        (MyNone: MyOption[Int]).orElse(MySome(4)) mustBe MySome(4)
-      }
-
-      "map2() combining 2 monads into one" in {
-        map2(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
-        map2(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
-
-        map2ViaForComprehension(Some("abc"), Some(2))((a: String, b: Int) => a(b)) mustBe Some('c')
-        map2ViaForComprehension(Some("abc"), None)((a: String, b: Int) => a(b)) mustBe None
-      }
-
-      "sequence() transforming List[Option[A]] to Option[List[A]]" in {
-        sequence(List(Some(1), Some(2), Some(3))) mustBe Some(List(1, 2, 3))
-        sequence(List(Some(1), Some(2), None)) mustBe None
-      }
-
-      "sequence() with for-comprehension transforming List[Option[A]] to Option[List[A]]" in {
-        sequenceViaForComprehension(List(Some(1), Some(2), Some(3))) mustBe Some(List(1, 2, 3))
-        sequenceViaForComprehension(List(Some(1), Some(2), None)) mustBe None
-      }
-
-    }
-    "Either" - {
-      "map(), flatMap(), map2() combining 2 monads into one" in {
-        val r: MyEither[String, Int] = MyRight(123)
-        val rr: MyEither[String, Int] = MyRight(10)
-        val l: MyEither[String, Int] = MyLeft("error")
-
-        r.map(_ * 100) mustBe MyRight(12300)
-        l.map(_ * 100) mustBe MyLeft("error")
-
-        r.flatMap(i => MyRight(i * 100)) mustBe MyRight(12300)
-        r.flatMap(i => MyLeft("" + i)) mustBe MyLeft("123")
-
-        l.flatMap(i => MyRight(i * 100)) mustBe MyLeft("error")
-        l.flatMap(i => MyLeft("" + i)) mustBe MyLeft("error")
-
-        r.map2(l)(_ * _) mustBe MyLeft("error")
-        r.map2(rr)(_ * _) mustBe MyRight(1230)
-      }
-
-      "sequence() transforming List[Either[ERR,STH]] to Either[ERR, List[STH]]" in {
-        sequence(List(MyRight(1), MyRight(2), MyRight(3))) mustBe MyRight(List(1, 2, 3))
-        sequence(List(MyRight(1), MyRight(2), MyLeft("err"))) mustBe MyLeft("err")
-      }
-
-      "sequence() with for-comprehension transforming List[Either[ERR,STH]] to Either[ERR, List[STH]]" in {
-        sequenceViaForComprehension(List(MyRight(1), MyRight(2), MyRight(3))) mustBe MyRight(List(1, 2, 3))
-        sequenceViaForComprehension(List(MyRight(1), MyRight(2), MyLeft("err"))) mustBe MyLeft("err")
-      }
-
-    }
+  "Tree" in {
+    import MyTree._
+    val t =
+      Branch(Leaf(1),
+        Branch(Leaf(1),
+          Branch(Branch(Leaf(1), Branch(Leaf(1), Leaf(1))),
+            Branch(Leaf(1),
+              Branch(Leaf(1),
+                Branch(Leaf(1),
+                  Branch(Leaf(1),
+                    Leaf(1))))))))
+    height(t) mustBe 8
   }
-
-  "For Comprehension (under the hood)" - {
+  "For Comprehension (under the hood)" in {
     import forComprehensionUnderTheHood._
 
-    "with Option" in {
-      isForComprehensionOptionWorking mustBe true
-    }
-
-    "with Either (since scala 2.12 Either has right-biased flatMap)" in {
-      isForComprehensionEitherWorking mustBe true
-    }
-
-  }
-
-  "Streams" - {
-    import Streams._
-    "converting a Stream to a List" in {
-      toList(MyStream[Int](1, 2, 3)) mustBe List(1, 2, 3)
-      toListTailRec(MyStream[Int](1, 2, 3)) mustBe List(1, 2, 3)
-    }
-    "take(n) from Stream" in {
-      take(MyStream[Int](1, 2, 3), 0) mustBe List()
-      take(MyStream[Int](1, 2, 3), 1) mustBe List(1)
-      take(MyStream[Int](1, 2, 3), 2) mustBe List(1, 2)
-      take(MyStream[Int](1, 2, 3), 3) mustBe List(1, 2, 3)
-    }
-    "takeWhile(p: A => Boolean) from Stream" in {
-      toList(takeWhile[Int](MyStream[Int](1, 2, 3, 4), _ <= 3)) mustBe List(1, 2, 3)
-    }
-
-    "exists(p: A => Boolean) from Stream" in {
-      exists[Int](MyStream[Int](0, 2, 4, 6), _ % 2 != 0) mustBe false
-    }
-    "forAll(p: A => Boolean) from Stream" in {
-      forAll[Int](MyStream[Int](), _ > 10) mustBe true
-      forAll[Int](MyStream[Int](11, 12), _ > 10) mustBe true
-      forAll[Int](MyStream[Int](11, 0, 12), _ > 10) mustBe false
-    }
-    "Infinite Stream of ones (1, 1, 1, 1 ... )" in {
-      take(ones, 5) mustBe List(1, 1, 1, 1, 1)
-      exists[Int](ones, _ == 1) mustBe true
-
-      take(infiniteStreamOf[Boolean](true), 5) mustBe List(true, true, true, true, true)
-      take(from(0), 5) mustBe List(0, 1, 2, 3, 4)
-    }
-    "Infinitif Fibonacci numbers" in {
-      take(fibs(), 7) mustBe List(0, 1, 1, 2, 3, 5, 8)
-    }
-  }
-
-  "Purely Functional State" - {
-    import PurelyFunctionalState._
-
-    "generate randonly list of integers" in {
-      val rng = SimpleRNG(123)
-
-      ints(10)(rng) mustBe ints(10)(rng)
-    }
+    resultForComrehension mustBe resultDesugared
+    resultForComrehension mustBe Some(12300)
   }
 
   "Futures" - {
@@ -335,21 +220,21 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
       val ec = scala.concurrent.ExecutionContext.global
 
       val aFailingFuture: Future[String] = newFailingFuture(ec)
-      aFailingFuture.onFailure{ case _ => throw new RuntimeException("some handling failure crashed ")}(ec)
+      aFailingFuture.onComplete { case Failure(_) => throw new RuntimeException("some handling failure crashed ") }(ec)
       Await.ready(aFailingFuture, oneSec)
     }
 
-    "callbacks - eventually all are executed, order not define, regardless errors in other callbacks" in {
-      import scala.concurrent.ExecutionContext.Implicits.global
-
-      val aFuture: Future[String] = Future("a" * 10)
-      aFuture onSuccess { case _ => throw new RuntimeException("some handling success crashed") }
-      aFuture onFailure { case _ => throw new RuntimeException("some handling failure crashed") }
-      aFuture onSuccess { case _ => print(" I can register many callbacks on 1 future") }
-      aFuture onSuccess { case _ => print(" callbacks are executed regardless errors in other callbacks") }
-      aFuture onSuccess { case _ => print(" as long as Future completes as Success/Failure and matches type in PartialFunction, eg Exception type in onFailure()") }
-      aFuture onSuccess { case _ => print(" and as long as callback gets Thread from pool to be executed") }
-    }
+//    "callbacks - eventually all are executed, order not define, regardless errors in other callbacks" in {
+//      import scala.concurrent.ExecutionContext.Implicits.global
+//
+//      val aFuture: Future[String] = Future("a" * 10)
+//      aFuture onSuccess { case _ => throw new RuntimeException("some handling success crashed") }
+//      aFuture onFailure { case _ => throw new RuntimeException("some handling failure crashed") }
+//      aFuture onSuccess { case _ => print(" I can register many callbacks on 1 future") }
+//      aFuture onSuccess { case _ => print(" callbacks are executed regardless errors in other callbacks") }
+//      aFuture onSuccess { case _ => print(" as long as Future completes as Success/Failure and matches type in PartialFunction, eg Exception type in onFailure()") }
+//      aFuture onSuccess { case _ => print(" and as long as callback gets Thread from pool to be executed") }
+//    }
 
     "synchronous future - one after another" in {
       Await.result(newSyncFuture(ec), oneSec) mustBe UpperCaseNameWithSpaces("S Y N C _ F U T U R E")
@@ -361,9 +246,9 @@ class ab_IntroToFunProgSpec extends FreeSpec with MustMatchers {
 
       newFailingFuture(ec).failed //it's OK that it's newFailingFuture, cause we expect it to fail
         .onComplete {
-        case Success(t: Throwable) => // ok
-        case _ => fail()
-      }
+          case Success(t: Throwable) => // ok
+          case _ => fail()
+        }
 
       newAsyncFuture(ec).failed // it's successful future, but we expect it to fail..
         .onComplete {

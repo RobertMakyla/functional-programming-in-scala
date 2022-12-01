@@ -1,9 +1,10 @@
 package fp
 
 import TailRecLastBeforeSmallest._
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 
-class TailRecLastBeforeSmallestSpec extends FreeSpec with MustMatchers {
+class TailRecLastBeforeSmallestSpec extends AnyFreeSpec with Matchers {
   "smallest tail rec" in {
     smallest(List()) mustBe None
     smallest(List(2)) mustBe Some(2)

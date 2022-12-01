@@ -2,15 +2,12 @@ name := "functional-programming-in-scala"
 
 version := "1.0"
 
-scalaVersion := "2.12.0"
+scalaVersion := "2.13.8"
 
 
 libraryDependencies ++= {
-  val scalaTestV       = "3.0.1"
-  val scalaCheckVersion = "1.13.4"
-
   Seq(
-    "org.scalatest"  %% "scalatest"  % scalaTestV % "test",
-    "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test"
+    "org.scalatest" %% "scalatest" % "3.2.7" % "test",
+    "org.scalacheck" %% "scalacheck" % "1.15.4" % "test"
   )
 }

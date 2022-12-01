@@ -2,12 +2,10 @@ package fp
 
 import fp.ad_MonoidsMonads.Monoids.Monoid
 import fp.ad_MonoidsMonads._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Prop.forAll
-import org.scalacheck._
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 
-class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
+class ad_MonoidsMonadsSpec extends AnyFreeSpec with Matchers {
 
 
   "Monads" - {
@@ -55,9 +53,7 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
       MySome(3).flatMap(i => MyNone) mustBe MyNone
     }
 
-    "testing MyTry Monad" in {
-
-
+    "testing MyTry Monad happy path" in {
       val res = for {
         a <- MyTry(3)
         b <- MyTry(a * 2)
@@ -66,6 +62,19 @@ class ad_MonoidsMonadsSpec extends FreeSpec with MustMatchers {
       res mustBe MySuccess("30")
 
     }
+    "testing MyTry Monad error catching" in {
+      val res = for {
+        a <- MyTry(3)
+        b <- MyTry.apply[Int]({ throw new Exception("boom")})
+        c <- MyTry(b * 5)
+      } yield "" + c
+      res match {
+        case MySuccess(_) => fail("that is unexpected")
+        case MyFailure(e) => e.getMessage mustBe "boom"
+      }
+
+    }
+
     "testing Monads associativity" in {
 
       // for comprehension

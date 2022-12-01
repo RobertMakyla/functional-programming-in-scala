@@ -1,8 +1,9 @@
 package fp
 
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 
-class ah_IOMonadSpec extends FreeSpec with MustMatchers {
+class ah_IOMonadSpec extends AnyFreeSpec with Matchers {
 
   import ah_IOMonad._
 

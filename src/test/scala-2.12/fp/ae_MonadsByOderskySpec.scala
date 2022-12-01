@@ -1,8 +1,9 @@
 package fp
 
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 
-class ae_MonadsByOderskySpec extends FreeSpec with MustMatchers {
+class ae_MonadsByOderskySpec extends AnyFreeSpec with Matchers {
 
   "Monads by Odersky" - {
     import fp.ae_MonadsByOdersky._

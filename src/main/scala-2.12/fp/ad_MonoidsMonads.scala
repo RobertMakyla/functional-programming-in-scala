@@ -1,6 +1,9 @@
 package fp
 
+import java.lang.Throwable
+import scala.util.Try
 import scala.util.control.NonFatal
+
 
 object ad_MonoidsMonads {
 
@@ -116,78 +119,6 @@ object ad_MonoidsMonads {
       def op(a: A, b: A): A
     }
 
-    /**
-     * Implement monoid: String, +, ""
-     */
-    val stringConcat = new Monoid[String] {
-      override def op(a: String, b: String): String = a + b
-
-      override def zero: String = ""
-    }
-
-    /**
-     * Implement monoid: Int, *, 1
-     */
-    val intMultiplication = new Monoid[Int]{
-      override def op(a: Int, b: Int): Int = a * b
-
-      override def zero: Int = 1
-    }
-
-    /**
-     * Ex 10.3
-     *
-     * A function having the same argument and return type is sometimes called an
-     * endofunction. Write a monoid for endofunctions:
-     *
-     * (type: A=>A, operation: ??? , zero element: ??? )
-     */
-    def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
-      def op(a1: A => A, a2: A => A): A => A = a1 compose a2
-
-      def zero: A => A = identity // (a => a)
-    }
-
-    /** Ex 10.4 use property-based testing to test monoid laws */
-
-    /**
-     * Folding lists with Monoids :
-     *
-     * Because of associativity and identity element laws,
-     * fold left and fold right must give the same result
-     */
-
-    val words = List("a", "b", "c")
-
-    val foldedWords1 = words.foldLeft(stringConcat.zero)(stringConcat.op) // abc
-
-    val foldedWords2 = words.foldRight(stringConcat.zero)(stringConcat.op) // abc
-
-
-    /**
-     * Ex 10.5
-     * If our type doesn't fit to any Monoid, we need to map it to some other type which does.
-     *
-     * Implement foldMap:
-     *
-     * def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B
-     */
-
-    def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
-      as.map(f).foldLeft(m.zero)(m.op)
-
-    /**
-     * Monoids are composable
-     * if A and B are monoids, then tuple (A, B) is also a monoid (called their product)
-     *
-     * Implement def productMonoid[A,B](a: Monoid[A], b: Monoid[B]): Monoid[(A,B)]
-     */
-
-    def productMonoid[A, B](a: Monoid[A], b: Monoid[B]): Monoid[(A, B)] = new Monoid[(A, B)] {
-      override def op(t1: (A, B), t2: (A, B)): (A, B) = (a.op(t1._1, t2._1), b.op(t1._2, t2._2))
-      override def zero: (A, B) = (a.zero, b.zero)
-    }
-
   }
 
   object Monads {
@@ -208,7 +139,7 @@ object ad_MonoidsMonads {
 
     trait Monad[A] {
       def flatMap[B](f: A => Monad[B]): Monad[B]
-      def unit(a: A): Monad[A]
+      def unit[B](b: B): Monad[B]
     }
 
     /** Implement map() using flatmap and unit
@@ -219,76 +150,90 @@ object ad_MonoidsMonads {
 
     def map[A, B](ls: List[A], f: A => B): List[B] = {
       def unit[T](t: T): List[T] = List.apply(t)
-      ls.flatMap( (a:A) => unit(f(a)))
-    }
 
+      ls.flatMap((a: A) => unit(f(a)))
+    }
 
 
     /** Implement the simplest Monad: Wrapper[A](a: A) */
 
     case class MyWrapper[A](a: A) extends Monad[A] {
       override def flatMap[B](f: A => Monad[B]): Monad[B] = f(a)
-      override def unit[T](t: T): Monad[T] = new MyWrapper(t)
-
-      def map[B](f: A=>B) = flatMap( (a:A) => unit(f(a)))
+      override def unit[B](b: B): Monad[B] = MyWrapper(b)
+      def map[B](f: A => B): Monad[B] = MyWrapper(f(a))
     }
 
-    case class NonEmptyList[A](head: A, tail: List[A]) {
-
-      def flatMap[B](f: A => NonEmptyList[B]): NonEmptyList[B] = {
-        val bs: List[B] = list.flatMap( a => f(a).list)
-        NonEmptyList(bs.head, bs.tail)
-      }
-      def unit(a: A): NonEmptyList[A] = NonEmptyList(a, Nil)
-
-      def map[B](f: A=>B): NonEmptyList[B] = {
-        val bs = list.map(f)
-        NonEmptyList(bs.head, bs.tail)
-      }
-
-      def list: List[A] = head :: tail //useful
-    }
-    object NonEmptyList {
-      def apply[A](head: A, tail: A* /*0-n*/ ): NonEmptyList[A] = NonEmptyList(head, tail.toList)
-    }
-
-
+    /** Implement MyOption
+     * hint 1: Make the type covariant: MyOption[+A]
+     * hint 2: None is a case object extending MyOption[Nothing]
+     */
     sealed trait MyOption[+A] {
       def flatMap[B](f: A => MyOption[B]): MyOption[B] = this match {
         case MySome(a) => f(a)
         case MyNone => MyNone
       }
-      def unit[B](b: B): MyOption[B] = MySome[B](b)
-      def map[B](f: A=>B): MyOption[B] = this match {
-        case MySome(a) => MySome(f(a))
+
+      def unit[B](b: B): MyOption[B] = MySome(b)
+
+      def map[B](f: A => B): MyOption[B] = this match {
+        case MySome(a) => unit(f(a))
         case MyNone => MyNone
       }
-    }
-    case class MySome[A](a: A) extends MyOption[A]
-    case object MyNone extends MyOption[Nothing]
 
-    sealed trait MyTry[T]{
-      def flatMap[U](f: T => MyTry[U]): MyTry[U] = this match {
-        case MySuccess(x) => try { f(x) } catch { case NonFatal(e) => MyFailure(e) }
-        case MyFailure(t) => MyFailure(t)
-      }
-      def unit(t: T): MyTry[T] = MySuccess(t)
-      def map[B](f: T=>B): MyTry[B] = this match {
-        case MySuccess(x) => MySuccess(f(x))
-        case MyFailure(t) => MyFailure(t)
-      }
+      def map2[B](f: A => B): MyOption[B] = flatMap((a: A) => unit(f(a)))
     }
+
+    case class MySome[A](a: A) extends MyOption[A]
+
+    case object MyNone extends MyOption[Nothing] // Nothing is a subtype of all types so MyNone will fit any type of MyOption[A] cause MyOption[A] is COVARIANT
+
+
+    /**
+     * hint: use the try{} catch{} block for risk code only in the constructor of companion object
+     */
+    sealed trait MyTry[A] {
+      def flatMap[B](f: A => MyTry[B]): MyTry[B] = this match {
+        case MySuccess(v) => f(v)
+        case MyFailure(t) => MyFailure(t)
+      }
+
+      def unit[B](b: B): MyTry[B] = MySuccess(b)
+
+      def map[B](f: A => B): MyTry[B] = flatMap(a => unit(f(a)))
+    }
+
     case class MySuccess[T](t: T) extends MyTry[T]
+
     case class MyFailure[T](t: Throwable) extends MyTry[T]
 
     object MyTry {
-      def apply[T](expr: => T): MyTry[T] =
-        try MySuccess(expr)
-        catch {
+      def apply[A](block: => A): MyTry[A] =
+        try {
+          MySuccess(block)
+        } catch {
           case NonFatal(e) => MyFailure(e)
         }
     }
 
-  }
+    /*
+    hint: when you implement a flatMap, first get all the 'bees' (List[B])
+     */
 
+    case class NonEmptyList[A](h: A, tail: List[A]) {
+      def flatMap[B](f: A => NonEmptyList[B]): NonEmptyList[B] = {
+        val bs: List[B] = all.flatMap(a => f(a).all)
+        NonEmptyList(bs.head, bs.tail)
+      }
+
+      def unit[B](b: B): NonEmptyList[B] = NonEmptyList(b, Nil)
+
+      private def all: List[A] = h :: tail
+
+      def map[B](f: A => B): NonEmptyList[B] = flatMap(a => unit(f(a))) // useful for the for-comprehension
+    }
+
+    object NonEmptyList {
+      def apply[A](h: A, tail: A*): NonEmptyList[A] = NonEmptyList(h, tail.toList)
+    }
+  }
 }

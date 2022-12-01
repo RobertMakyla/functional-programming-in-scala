@@ -1,8 +1,10 @@
 package fp
 
-import org.scalatest.{FreeSpec, MustMatchers}
-import al_PhantomType._
-class al_PhantomTypeSpec  extends FreeSpec with MustMatchers{
+import fp.al_PhantomType._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+
+class al_PhantomTypeSpec  extends AnyFreeSpec with Matchers{
 
   "it works" in {
    val door = Door[Closed]()
