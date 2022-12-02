@@ -127,7 +127,7 @@ object ab_IntroToFunProg {
     def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as.foldRight(List.empty[B])((a, acc) => f(a) ++ acc)
 
     /**
-     * Write a function filter, using flatMap:
+     * filter, using flatMap:
      */
     def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] = as.flatMap { a: A => if (f(a)) List(a) else Nil }
 
@@ -147,11 +147,12 @@ object ab_IntroToFunProg {
 
     def appendWithFoldRight[A](ls: List[A], elem: A): List[A] = ls.foldRight(List(elem))((elem, acc) => elem :: acc)
 
-    //    prepend using fold
+    // prepend using fold
     def prependWithFoldLeft[A](ls: List[A], elem: A): List[A] = ls.foldLeft(List(elem))((acc, elem) => elem :: acc).reverse
 
     def prependWithFoldRight[A](ls: List[A], elem: A): List[A] = ls.reverse.foldRight(List(elem))((elem, acc) => elem :: acc).reverse
 
+    // implement collect using partial function
     def collect[A, B](ls: List[A], f: PartialFunction[A, B]): List[B] = ls.foldRight(List.empty[B]) { (e, acc) =>
       if (f.isDefinedAt(e)) f(e) :: acc else acc
     }
