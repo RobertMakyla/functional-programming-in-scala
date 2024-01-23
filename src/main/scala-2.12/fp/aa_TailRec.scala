@@ -13,7 +13,7 @@ object aa_TailRec {
    * @param n - iterates down, to stop when n == 0
    */
   @tailrec
-  def factorial(n: Int, acc: Int = 1): Int = if (n == 0) acc else factorial(n - 1, acc * n)
+  def factorial(n: Int, acc: Int = 1): Int = if (n == 1) acc else factorial(n - 1, acc * n)
 
   /**
    * sum(n) = 0 + 1 + 2 + 3 + ... + n
