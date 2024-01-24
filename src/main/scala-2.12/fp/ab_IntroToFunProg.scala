@@ -104,56 +104,57 @@ object ab_IntroToFunProg {
 
 
     /**
-     * implement map using fold:
+     * implement map using fold: (foldRight is not reversing the list)
      *
      * def map[A,B](as: List[A])(f: A => B): List[B]
      */
-    def map[A, B](as: List[A])(f: A => B): List[B] = as.foldRight(List.empty[B])((a: A, acc: List[B]) => f(a) :: acc)
+    def map[A, B](as: List[A])(f: A => B): List[B] = as.foldRight(List.empty[B])((elem: A, acc: List[B]) => f(elem) :: acc)
 
     /**
      * Write a function filter, using foldRight:
      *
      * def filter[A](as: List[A])(f: A => Boolean): List[A]
      */
-    def filter[A](as: List[A])(f: A => Boolean): List[A] = as.foldRight(List.empty[A])((a, acc) => if (f(a)) a :: acc else acc)
+    def filter[A](as: List[A])(f: A => Boolean): List[A] = as.foldRight(List.empty[A])((elem: A, acc: List[A]) => if (f(elem)) elem :: acc else acc)
 
     /**
      * implement flatMap using fold:
      *
      * def flatMap[A,B](as: List[A])(f: A => List[B]): List[B]
      */
-    def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as.foldRight(List.empty[B])((a, acc) => f(a) ++ acc)
+    def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as.foldRight(List.empty[B])((elem: A, acc: List[B]) => f(elem) ++ acc)
 
     /**
      * filter, using flatMap:
      */
-    def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] = as.flatMap { a: A => if (f(a)) List(a) else Nil }
-
+    def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] = as.flatMap(a => if (f(a)) List(a) else Nil)
     /**
      * zip adding Int's
      */
     @tailrec
     def zip(a: List[Int], b: List[Int], acc: List[Int] = Nil): List[Int] = (a, b) match {
       case (Nil, Nil) => acc.reverse
-      case (Nil, bhead :: btail) => zip(Nil, btail, bhead :: acc)
-      case (ahead :: atail, Nil) => zip(atail, Nil, ahead :: acc)
-      case (ahead :: atail, bhead :: btail) => zip(atail, btail, ahead + bhead :: acc)
+      case (Nil, bh :: bt) => zip(Nil, bt, bh :: acc)
+      case (ah :: at, Nil) => zip(at, Nil, ah :: acc)
+      case (ah :: at, bh :: bt) => zip(at, bt, (ah + bh) :: acc)
     }
 
     // append using fold
-    def appendWithFoldLeft[A](ls: List[A], elem: A): List[A] = ls.reverse.foldLeft(List(elem))((acc, elem) => elem :: acc)
-
     def appendWithFoldRight[A](ls: List[A], elem: A): List[A] = ls.foldRight(List(elem))((elem, acc) => elem :: acc)
+
+    def appendWithFoldLeft[A](ls: List[A], elem: A): List[A] = ls.reverse.foldLeft(List(elem))((acc, elem) => elem :: acc)
 
     // prepend using fold
     def prependWithFoldLeft[A](ls: List[A], elem: A): List[A] = ls.foldLeft(List(elem))((acc, elem) => elem :: acc).reverse
 
     def prependWithFoldRight[A](ls: List[A], elem: A): List[A] = ls.reverse.foldRight(List(elem))((elem, acc) => elem :: acc).reverse
 
-    // implement collect using partial function
-    def collect[A, B](ls: List[A], f: PartialFunction[A, B]): List[B] = ls.foldRight(List.empty[B]) { (e, acc) =>
-      if (f.isDefinedAt(e)) f(e) :: acc else acc
-    }
+    /* implement collect using fold
+     *
+     * def collect[A, B](ls: List[A], f: PartialFunction[A, B]): List[B]
+     */
+    def collect[A, B](ls: List[A], f: PartialFunction[A, B]): List[B] =
+      ls.foldRight(List.empty[B])((e: A, acc: List[B]) => if (f.isDefinedAt(e)) f.apply(e) :: acc else acc)
 
   }
 
@@ -241,7 +242,7 @@ object ab_IntroToFunProg {
 
     val resultDesugared = maybeString
       .flatMap(s => maybeStringOnlyNumbers(s))
-      .flatMap(s => maybeIntFromString(s))
+      .flatMap(numStr => maybeIntFromString(numStr))
       .map(i => i * 100)
 
   }

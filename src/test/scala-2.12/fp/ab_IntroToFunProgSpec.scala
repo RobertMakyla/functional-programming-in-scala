@@ -162,7 +162,7 @@ class ab_IntroToFunProgSpec extends AnyFreeSpec with Matchers {
       appendWithFoldRight(List(1), 2) mustBe List(1, 2)
       appendWithFoldRight(List(1, 3, 4), 2) mustBe List(1, 3, 4, 2)
     }
-    "prenend " in {
+    "prepend " in {
       prependWithFoldLeft(Nil, 2) mustBe List(2)
       prependWithFoldLeft(List(1), 2) mustBe List(2, 1)
       prependWithFoldLeft(List(1, 3, 4), 2) mustBe List(2, 1, 3, 4)
