@@ -102,6 +102,7 @@ class ab_IntroToFunProgSpec extends AnyFreeSpec with Matchers {
     }
     "foldLeft() tail recursive" in {
       foldLeft(List[Int](), 0)(_ + _) mustBe 0
+      foldLeft(List[Int](), 1)(_ + _) mustBe 1
       foldLeft(List(5), 5)(_ + _) mustBe 10
       foldLeft(List(5, 5), 0)(_ + _) mustBe 10
       foldLeft(List(5, 5), 5)(_ + _) mustBe 15

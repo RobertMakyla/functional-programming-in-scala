@@ -27,8 +27,7 @@ object ab_IntroToFunProg {
      *            and return other function partially specified
      */
     def curry[A, B, C](f: (A, B) => C): A => (B => C) =
-      (a:A) => (b:B) => f(a,b)
-
+      (a: A) => (b: B) => f(a, b)
 
     def uncurry[A, B, C](f: A => B => C): (A, B) => C =
       (a: A, b: B) => f(a)(b)
@@ -54,7 +53,6 @@ object ab_IntroToFunProg {
     @tailrec
     def foldLeft[A, Z](ls: List[A], z: Z)(f: (Z, A) => Z): Z = ls match {
       case Nil => z
-      case h :: Nil => f(z, h)
       case h :: tail => foldLeft(tail, f(z, h))(f)
     }
 
