@@ -9,24 +9,32 @@ object ah_IOMonad {
    * It should be a monoid (IO[A], ++, Empty)
    * It should be a monad (unit, flatMap - associativity, left/right identity)
    */
+
+  /*
+  * hint: trait IO[A]{ def run: A }
+  * */
   trait IO[A] {
     self => // so that we can refer to the implementation of this trait using self, instead of this
 
     def run: A
 
-    def unit(a: A): IO[A] = new IO[A] {def run = a}
+    def flatMap[B](f: A => IO[B]): IO[B] = IO{ f(self.run).run }
 
-    def flatMap[B](f: A => IO[B]): IO[B] = new IO[B] {
-      def run = f(self.run).run
-    }
+    def unit[B](b: B): IO[B] = IO(b)
 
-    def map[B](f: A => B): IO[B] = new IO[B] {def run = f(self.run)}
+    def map[B](f: A => B): IO[B] = flatMap(x => unit(f(x)))
 
     def ++[B](that: IO[B]): IO[B] = new IO[B] {
-      def run = {
-        self.run
+      def run: B = {
+        this.run
         that.run
       }
+    }
+  }
+
+  object IO {
+    def apply[A](a: => A): IO[A] = new IO[A] {
+      override def run: A = a
     }
   }
 
@@ -40,8 +48,8 @@ object ah_IOMonad {
   }
 
   /** Implement IO monad doing some side effect (like readLine from console user) and returning Int */
-  def doSideEffectAndReturnOneHundred = new IO[Int] {
-    def run = {/* side effect which can block execution, like readLine from user*/ 100}
+  def doSideEffectAndReturnOneHundred: IO[Int] = IO {
+    {/* side effect which can block execution, like readLine from user*/ 100}
   }
 
   /**
@@ -72,7 +80,7 @@ object ah_IOMonad {
    *   (if we don't want to load whole file to memory - streaming is the answer, but processing loops are ugly - we cannot compose them)
    */
 
-  /** Local efects and mutable state
+  /** Local effects and mutable state
    *
    * Function is pure if it makes no side effects and if it's referentially transparent
    * (same args => always the same result)
