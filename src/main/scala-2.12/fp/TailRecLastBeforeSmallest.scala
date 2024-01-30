@@ -17,10 +17,12 @@ object TailRecLastBeforeSmallest {
   @tailrec
   def smallest(ls: List[Int], maybeSmallest: Option[Int] = None): Option[Int] = ls match {
     case Nil => maybeSmallest
-    case h :: tail => maybeSmallest match {
-      case Some(s) => smallest(tail, Some(math.min(s, h)))
-      case None => smallest(tail, Some(h))
-    }
+    case h :: tail =>
+      val smallestSoFar = maybeSmallest match {
+        case Some(s) => math.min(h, s)
+        case None => h
+      }
+      smallest(tail, Some(smallestSoFar))
   }
 
   /**
