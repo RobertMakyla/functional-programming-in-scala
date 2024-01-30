@@ -87,7 +87,7 @@ But Left unit law could fail because: 'unit()' will never throw non-fatal except
 unit() it just wrapping expression with Try(), so non-fatal expressions are returned as Failure - not thrown
 While, right side of equation may throw non-fatal expressions
 
-Even if Try is not a Monad, it is still good for for-comprehension, cause it has flatMap/unit/map
+Even if Try is not a Monad, it is still good for for-comprehension, cause it has flatMap/unit ( so also map)
       """
   }
 

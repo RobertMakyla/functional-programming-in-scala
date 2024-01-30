@@ -162,7 +162,7 @@ object ad_MonoidsMonads {
       override def unit[B](b: B): Monad[B] = MyWrapper(b)
 
       // needed for for-comprehension
-      def map[B](f: A => B): Monad[B] = flatMap(b => unit(f(b))) // or just MyWrapper(f(a))
+      def map[B](f: A => B): Monad[B] = flatMap(a => unit(f(a))) // or just MyWrapper(f(a))
     }
 
     /** Implement MyOption
@@ -171,52 +171,45 @@ object ad_MonoidsMonads {
      */
     sealed trait MyOption[+A] {
       def flatMap[B](f: A => MyOption[B]): MyOption[B] = this match {
-        case MySome(a) => f(a)
+        case MySome(a: A) => f(a)
         case MyNone => MyNone
       }
 
       def unit[B](b: B): MyOption[B] = MySome(b)
 
-      def map[B](f: A => B): MyOption[B] = this match {
-        case MySome(a) => unit(f(a))
-        case MyNone => MyNone
-      }
-
-      def map2[B](f: A => B): MyOption[B] = flatMap((a: A) => unit(f(a)))
+      def map[B](f: A => B): MyOption[B] = flatMap(x => unit(f(x)))
     }
 
     case class MySome[A](a: A) extends MyOption[A]
 
-    case object MyNone extends MyOption[Nothing] // Nothing is a subtype of all types so MyNone will fit any type of MyOption[A] cause MyOption[A] is COVARIANT
-
+  // Nothing is a subtype of all types so MyNone will fit any type of MyOption[A] cause MyOption[A] is COVARIANT
+    case object MyNone extends MyOption[Nothing]
 
     /**
      * hint: use the try{} catch{} block for risk code only in the constructor of companion object
      */
     sealed trait MyTry[A] {
       def flatMap[B](f: A => MyTry[B]): MyTry[B] = this match {
-        case MySuccess(v) => f(v)
+        case MySuccess(a: A) => f(a)
         case MyFailure(t) => MyFailure(t)
       }
 
       def unit[B](b: B): MyTry[B] = MySuccess(b)
 
-      def map[B](f: A => B): MyTry[B] = flatMap(a => unit(f(a)))
+      def map[B](f: A => B): MyTry[B] = flatMap(x => unit(f(x)))
     }
 
-    case class MySuccess[T](t: T) extends MyTry[T]
-
-    case class MyFailure[T](t: Throwable) extends MyTry[T]
+    case class MySuccess[A](a:A) extends MyTry[A]
+    case class MyFailure[A](t: Throwable) extends MyTry[A]
 
     object MyTry {
-      def apply[A](block: => A): MyTry[A] =
+      def apply[A](risky: => A): MyTry[A] =
         try {
-          MySuccess(block)
+          MySuccess(risky)
         } catch {
-          case NonFatal(e) => MyFailure(e)
+          case NonFatal(t) => MyFailure(t)
         }
     }
-
     /*
     hint: when you implement a flatMap, first get all the 'bees' (List[B])
      */
@@ -229,6 +222,7 @@ object ad_MonoidsMonads {
 
       def unit[B](b: B): NonEmptyList[B] = NonEmptyList(b, Nil)
 
+      //util
       private def all: List[A] = h :: tail
 
       def map[B](f: A => B): NonEmptyList[B] = flatMap(a => unit(f(a))) // useful for the for-comprehension
