@@ -160,7 +160,9 @@ object ad_MonoidsMonads {
     case class MyWrapper[A](a: A) extends Monad[A] {
       override def flatMap[B](f: A => Monad[B]): Monad[B] = f(a)
       override def unit[B](b: B): Monad[B] = MyWrapper(b)
-      def map[B](f: A => B): Monad[B] = MyWrapper(f(a))
+
+      // needed for for-comprehension
+      def map[B](f: A => B): Monad[B] = flatMap(b => unit(f(b))) // or just MyWrapper(f(a))
     }
 
     /** Implement MyOption
