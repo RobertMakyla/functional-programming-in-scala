@@ -36,8 +36,8 @@ class ad_MonoidsMonadsSpec extends AnyFreeSpec with Matchers {
 
       val res = for {
         a <- NonEmptyList(1, 2)
-        b <- NonEmptyList(10, 100)
-      } yield a * b
+        b <- NonEmptyList(a * 10, a * 100)
+      } yield b
       res mustBe NonEmptyList(10, 100, 20, 200)
     }
 
