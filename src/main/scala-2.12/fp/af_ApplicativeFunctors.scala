@@ -45,7 +45,7 @@ object af_ApplicativeFunctors {
   }
 
   /**
-   * Diferrence between Applicatives and Monads:
+   * Difference between Applicatives and Monads:
    *
    * - Monad - the result of previous computation has influence weather we continue with computations
    *   (context sensitive computations)
