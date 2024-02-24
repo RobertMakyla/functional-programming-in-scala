@@ -157,16 +157,18 @@ object ad_MonoidsMonads {
 
     /** Implement the simplest Monad: Wrapper[A](a: A) */
 
-    case class MyWrapper[A](a: A) extends Monad[A] {
-      override def flatMap[B](f: A => Monad[B]): Monad[B] = f(a)
-      override def unit[B](b: B): Monad[B] = MyWrapper(b)
+    case class MyWrapper[A](a: A) {
+      def flatMap[B](f: A => MyWrapper[B]): MyWrapper[B] = f(a)
+
+      def unit[B](b: B): MyWrapper[B] = MyWrapper(b)
 
       // needed for for-comprehension
-      def map[B](f: A => B): Monad[B] = flatMap(a => unit(f(a))) // or just MyWrapper(f(a))
+      def map[B](f: A => B): MyWrapper[B] = flatMap(a => unit(f(a))) // or just MyWrapper(f(a))
     }
 
     /** Implement MyOption
-     * hint 1: Make the type covariant: MyOption[+A]
+     *
+     * hint 1: Make the type covariant: MyOption[+A] - it's crucial because we want MyNone to be in the same class hierarchy as MySome[AnyType]
      * hint 2: None is a case object extending MyOption[Nothing]
      */
     sealed trait MyOption[+A] {
@@ -177,15 +179,16 @@ object ad_MonoidsMonads {
 
       def unit[B](b: B): MyOption[B] = MySome(b)
 
-      def map[B](f: A => B): MyOption[B] = flatMap(x => unit(f(x)))
+      def map[B](f: A => B): MyOption[B] = flatMap(a => unit(f(a)))
     }
 
     case class MySome[A](a: A) extends MyOption[A]
 
-  // Nothing is a subtype of all types so MyNone will fit any type of MyOption[A] cause MyOption[A] is COVARIANT
-    case object MyNone extends MyOption[Nothing]
+    case object MyNone extends MyOption[Nothing] // Nothing is a subtype of all types so MyNone will fit any type of MySome[A] cause MyOption[+A] is COVARIANT
 
-    /**
+
+    /** Implement MyTry
+     *
      * hint: use the try{} catch{} block for risk code only in the constructor of companion object
      */
     sealed trait MyTry[A] {
@@ -196,10 +199,10 @@ object ad_MonoidsMonads {
 
       def unit[B](b: B): MyTry[B] = MySuccess(b)
 
-      def map[B](f: A => B): MyTry[B] = flatMap(x => unit(f(x)))
+      def map[B](f: A => B): MyTry[B] = flatMap(a => unit(f(a)))
     }
 
-    case class MySuccess[A](a:A) extends MyTry[A]
+    case class MySuccess[A](a: A) extends MyTry[A]
     case class MyFailure[A](t: Throwable) extends MyTry[A]
 
     object MyTry {
@@ -210,10 +213,11 @@ object ad_MonoidsMonads {
           case NonFatal(t) => MyFailure(t)
         }
     }
-    /*
-    hint: when you implement a flatMap, first get all the 'bees' (List[B])
-     */
 
+    /* Implement NonEmptyList[A]
+     *
+     * hint: when you implement a flatMap, first get all the 'bees' (List[B])
+     */
     case class NonEmptyList[A](h: A, tail: List[A]) {
       def flatMap[B](f: A => NonEmptyList[B]): NonEmptyList[B] = {
         val bs: List[B] = all.flatMap(a => f(a).all)
