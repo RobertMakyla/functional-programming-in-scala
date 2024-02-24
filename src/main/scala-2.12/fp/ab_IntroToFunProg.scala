@@ -26,7 +26,7 @@ object ab_IntroToFunProg {
      *            and return other function partially specified
      */
     def curry[A, B, C](f: (A, B) => C): A => (B => C) =
-      (a: A) => (b: B) => f(a, b)
+      (a: A) => f(a, _)
 
     def uncurry[A, B, C](f: A => B => C): (A, B) => C =
       (a: A, b: B) => f(a)(b)
