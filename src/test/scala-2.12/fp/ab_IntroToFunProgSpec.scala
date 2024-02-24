@@ -119,7 +119,7 @@ class ab_IntroToFunProgSpec extends AnyFreeSpec with Matchers {
       reverse(List(1, 2, 3)) mustBe List(3, 2, 1)
     }
     "foldRight() in terms of foldLeft" in {
-      foldRight(List("a", "b"), "c")(_ + _) mustBe "abc"
+      foldRight(List(1, 2, 3, 4), "5")(_ + _) mustBe "12345"
     }
 
     //    "append in terms of foldRight" in {

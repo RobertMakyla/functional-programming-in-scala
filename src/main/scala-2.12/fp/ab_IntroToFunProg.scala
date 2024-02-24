@@ -68,7 +68,7 @@ object ab_IntroToFunProg {
      * fold left:                 (z) -> a -> b -> c
      * fold right via fold left:  (z) -> c -> b -> a
      */
-    def foldRight[E, Z](ls: List[E], acc: Z)(f: (E, Z) => Z): Z = ls.reverse.foldLeft(acc)((acc: Z, elem: E) => f(elem, acc))
+    def foldRight[E, Z](ls: List[E], z: Z)(f: (E, Z) => Z): Z = ls.reverse.foldLeft(z)((acc, elem) => f(elem, acc))
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // so to implement foldRight in terms of foldLEft we need to :
