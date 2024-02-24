@@ -133,9 +133,9 @@ object ab_IntroToFunProg {
     @tailrec
     def zip(a: List[Int], b: List[Int], acc: List[Int] = Nil): List[Int] = (a, b) match {
       case (Nil, Nil) => acc.reverse
-      case (Nil, bh :: bt) => zip(Nil, bt, bh :: acc)
-      case (ah :: at, Nil) => zip(at, Nil, ah :: acc)
-      case (ah :: at, bh :: bt) => zip(at, bt, (ah + bh) :: acc)
+      case (as, Nil) => zip(as.tail, Nil, as.head :: acc)
+      case (Nil, bs) => zip(Nil, bs.tail, bs.head :: acc)
+      case (a :: tailA, b :: tailB) => zip(tailA, tailB, (a + b) :: acc)
     }
 
     // append using fold
