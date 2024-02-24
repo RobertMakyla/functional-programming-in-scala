@@ -138,14 +138,45 @@ object ab_IntroToFunProg {
       case (a :: tailA, b :: tailB) => zip(tailA, tailB, (a + b) :: acc)
     }
 
-    // append using fold
+    /**
+     * Implement append(ls: List[A], elem: A): List[A] using foldRight
+     *
+     * hint:
+     * foldRight is not reverting the list and it's starting from the right side, so it's perfect for appending
+     */
     def appendWithFoldRight[A](ls: List[A], elem: A): List[A] = ls.foldRight(List(elem))((elem, acc) => elem :: acc)
 
+    /**
+     * Implement append(ls: List[A], elem: A): List[A] using foldLeft
+     *
+     * hint:
+     * we hava a list (1, 2, 3)
+     * we want to append (1, 2, 3, x)
+     * but fold left is reverting a list  (x)(1, 2, 3) => (3, 2, 1 x)
+     * so first we need to reverse a list and the use foldLeft
+     */
     def appendWithFoldLeft[A](ls: List[A], elem: A): List[A] = ls.reverse.foldLeft(List(elem))((acc, elem) => elem :: acc)
 
-    // prepend using fold
+    /**
+     * Implement prepend(ls: List[A], elem: A): List[A] using foldLeft
+     *
+     * hint:
+     * we hava a list (1, 2, 3)
+     * we want to prenend (x, 1, 2, 3)
+     * but fold left is reverting a list  (x)(1, 2, 3) => (3, 2, 1 x)
+     * so let's just reverse at the end to get what we want
+     */
     def prependWithFoldLeft[A](ls: List[A], elem: A): List[A] = ls.foldLeft(List(elem))((acc, elem) => elem :: acc).reverse
 
+    /**
+     * Implement prepend(ls: List[A], elem: A): List[A] using foldRight
+     *
+     * hint:
+     * we hava a list (1, 2, 3)
+     * we want to prepend (x, 1, 2, 3)
+     * but fold right is doing  (x)(1, 2, 3) => (1, 2 ,3, x)
+     * so we need to reverse a list to (3,2,1), do foldRight to get (3,2,1,x), and reverse back to (x,1,2,3)
+     */
     def prependWithFoldRight[A](ls: List[A], elem: A): List[A] = ls.reverse.foldRight(List(elem))((elem, acc) => elem :: acc).reverse
 
     /* implement collect using fold
