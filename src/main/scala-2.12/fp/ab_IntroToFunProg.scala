@@ -14,8 +14,7 @@ object ab_IntroToFunProg {
     @tailrec
     def isSorted[A](ls: List[A], f: (A, A) => Boolean, acc: Boolean = true): Boolean = ls match {
       case _ if ls.size < 2 => acc
-      case h :: a :: Nil => acc && f(h, a)
-      case h :: a :: tail => isSorted(a :: tail, f, acc && f(h, a))
+      case h :: second :: _ => isSorted(ls.tail, f, acc && f(h, second))
     }
 
   }

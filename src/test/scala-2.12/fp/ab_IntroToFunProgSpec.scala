@@ -28,7 +28,11 @@ class ab_IntroToFunProgSpec extends AnyFreeSpec with Matchers {
         TestCase(List(1, 2, 4, 4, 5), false),
         TestCase(List(1, 2, 4, 5, 6), true),
         TestCase(List(1, 2, 4, 5, 7), true),
-        TestCase(List(1, 2, 4, 5, 8), true)
+        TestCase(List(1, 2, 4, 5, 8), true),
+        TestCase(List(2, 1), false),
+        TestCase(List(2, 1, 3), false),
+        TestCase(List(2, 1, 4, 5), false)
+
       ).foreach { test =>
         isSorted(test.ls, naturally) mustBe test.expectedResult
       }
