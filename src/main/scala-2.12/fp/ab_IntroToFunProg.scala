@@ -63,10 +63,12 @@ object ab_IntroToFunProg {
     /**
      * implement foldRight using foldLeft
      *
-     * list(a, b, c)
+     * hint:
+     * we have a list (1,2,3)
+     * what is fold right doing: (x)(1 2 3) => (1 2 3 x)
+     * what is fold left doing:  (x)(1 2 3) => (3 2 1 x)
      *
-     * fold left:                 (z) -> a -> b -> c
-     * fold right via fold left:  (z) -> c -> b -> a
+     * So first we must invert 1,2,3 into 3,2,1 and then apply foldLeft to get (1 2 3 x)
      */
     def foldRight[E, Z](ls: List[E], z: Z)(f: (E, Z) => Z): Z = ls.reverse.foldLeft(z)((acc, elem) => f(elem, acc))
 
